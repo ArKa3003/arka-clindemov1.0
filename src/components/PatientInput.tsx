@@ -119,7 +119,7 @@ export function PatientInput({ onSubmit, isLoading }: PatientInputProps) {
                     age: parseInt(e.target.value) || 0,
                   }))
                 }
-                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
@@ -131,7 +131,7 @@ export function PatientInput({ onSubmit, isLoading }: PatientInputProps) {
                 onChange={e =>
                   setFormData(prev => ({ ...prev, sex: e.target.value as any }))
                 }
-                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="male">Male</option>
                 <option value="female">Female</option>
@@ -156,7 +156,7 @@ export function PatientInput({ onSubmit, isLoading }: PatientInputProps) {
                   chiefComplaint: e.target.value,
                 }))
               }
-              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -173,7 +173,7 @@ export function PatientInput({ onSubmit, isLoading }: PatientInputProps) {
               onChange={e =>
                 setFormData(prev => ({ ...prev, duration: e.target.value }))
               }
-              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -192,7 +192,7 @@ export function PatientInput({ onSubmit, isLoading }: PatientInputProps) {
                 }))
               }
               rows={2}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -208,7 +208,7 @@ export function PatientInput({ onSubmit, isLoading }: PatientInputProps) {
               onChange={e =>
                 setFormData(prev => ({ ...prev, symptoms: e.target.value }))
               }
-              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -253,7 +253,7 @@ export function PatientInput({ onSubmit, isLoading }: PatientInputProps) {
                       imagingModality: e.target.value as ImagingModality,
                     }))
                   }
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   {IMAGING_MODALITIES.map(mod => (
                     <option key={mod} value={mod}>
@@ -274,7 +274,7 @@ export function PatientInput({ onSubmit, isLoading }: PatientInputProps) {
                   onChange={e =>
                     setFormData(prev => ({ ...prev, bodyPart: e.target.value }))
                   }
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -290,7 +290,7 @@ export function PatientInput({ onSubmit, isLoading }: PatientInputProps) {
                 onChange={e =>
                   setFormData(prev => ({ ...prev, indication: e.target.value }))
                 }
-                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div className="mt-4">
@@ -305,7 +305,7 @@ export function PatientInput({ onSubmit, isLoading }: PatientInputProps) {
                     urgency: e.target.value as any,
                   }))
                 }
-                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="routine">Routine</option>
                 <option value="urgent">Urgent</option>
@@ -346,7 +346,7 @@ export function PatientInput({ onSubmit, isLoading }: PatientInputProps) {
                         priorImagingModality: e.target.value as ImagingModality,
                       }))
                     }
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     {IMAGING_MODALITIES.map(mod => (
                       <option key={mod} value={mod}>
@@ -369,7 +369,7 @@ export function PatientInput({ onSubmit, isLoading }: PatientInputProps) {
                         priorImagingBodyPart: e.target.value,
                       }))
                     }
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
@@ -386,7 +386,7 @@ export function PatientInput({ onSubmit, isLoading }: PatientInputProps) {
                         priorImagingDays: parseInt(e.target.value) || 1,
                       }))
                     }
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>

@@ -2,7 +2,7 @@
 'use client';
 
 import { EvaluationResult } from '@/types';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
+import { Card, CardContent } from './ui/Card';
 import { Badge } from './ui/Badge';
 import { clsx } from 'clsx';
 
@@ -159,8 +159,17 @@ function ScoreCircle({
       )}
     >
       <div className="text-center">
-        <span className="text-3xl font-bold">{score}</span>
-        <span className="text-lg text-gray-500">/9</span>
+        <span
+          className={clsx(
+            'text-3xl font-bold',
+            light === 'green' && 'text-green-700',
+            light === 'yellow' && 'text-amber-700',
+            light === 'red' && 'text-red-700'
+          )}
+        >
+          {score}
+        </span>
+        <span className="text-lg text-gray-600">/9</span>
       </div>
     </div>
   );
