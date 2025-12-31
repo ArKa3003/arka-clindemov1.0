@@ -13,12 +13,14 @@ import {
   CDSHooksRequest,
   CDSHooksResponse,
   CDSHooksCard,
+  ACRCriteria,
 } from '@/types';
 import {
   ACR_CRITERIA_DATABASE,
   findMatchingCriteria,
   getAlternatives,
 } from './acr-criteria';
+import { parseDuration as parseDurationAdvanced } from './duration-parser';
 
 // ============================================================================
 // DEMO PATH: Standalone Evaluation
@@ -42,20 +44,29 @@ export function evaluateImaging(scenario: ClinicalScenario): EvaluationResult {
 
   // Step 3: Find matching ACR criteria
   const variant = determineVariant(scenario, hasRedFlags);
-  const matchedCriteria = findMatchingCriteria(
+  const matchResult = findMatchingCriteria(
     topic,
     variant,
     scenario.proposedImaging.modality
   );
 
-  // Step 4: Calculate appropriateness score
-  const appropriatenessScore = calculateScore(matchedCriteria, scenario);
+  // Determine coverage status and confidence level
+  const coverageStatus = determineCoverageStatus(matchResult);
+  const confidenceLevel = determineConfidenceLevel(matchResult, coverageStatus);
 
-  // Step 5: Determine traffic light
-  const trafficLight = scoreToTrafficLight(appropriatenessScore.value);
+  // Use matched criteria or closest match
+  const matchedCriteria = matchResult.criteria || matchResult.closestMatch;
+
+  // Step 4: Calculate appropriateness score
+  const appropriatenessScore = calculateScore(matchedCriteria, scenario, coverageStatus);
+
+  // Step 5: Determine traffic light (handle insufficient data case)
+  const trafficLight = appropriatenessScore.value === 0 
+    ? 'yellow' // Use yellow for insufficient data
+    : scoreToTrafficLight(appropriatenessScore.value);
 
   // Step 6: Generate reasoning
-  const reasoning = generateReasoning(scenario, matchedCriteria, appropriatenessScore);
+  const reasoning = generateReasoning(scenario, matchedCriteria, appropriatenessScore, matchResult, coverageStatus);
 
   // Step 7: Get alternatives
   const alternatives = generateAlternatives(topic, scenario, appropriatenessScore);
@@ -64,25 +75,30 @@ export function evaluateImaging(scenario: ClinicalScenario): EvaluationResult {
   const warnings = generateWarnings(scenario);
 
   // Step 9: Get evidence links
-  const evidenceLinks = getEvidenceLinks(topic, matchedCriteria);
+  const evidenceLinks = getEvidenceLinks(topic, matchedCriteria || matchResult.closestMatch);
+
+  // Create fallback criteria if no match found
+  const finalMatchedCriteria = matchedCriteria || {
+    id: 'no-match',
+    topic,
+    variant,
+    procedure: scenario.proposedImaging.modality,
+    rating: 0, // Will be handled in calculateScore for INSUFFICIENT_DATA
+    rrl: 'Unknown',
+    source: 'No matching ACR criteria found',
+    lastReviewed: 'N/A',
+  };
 
   return {
     appropriatenessScore,
     trafficLight,
-    matchedCriteria: matchedCriteria || {
-      id: 'no-match',
-      topic,
-      variant,
-      procedure: scenario.proposedImaging.modality,
-      rating: 5, // Default to "may be appropriate" if no match
-      rrl: 'Unknown',
-      source: 'No matching ACR criteria found',
-      lastReviewed: 'N/A',
-    },
+    matchedCriteria: finalMatchedCriteria,
     reasoning,
     alternatives,
     warnings,
     evidenceLinks,
+    confidenceLevel,
+    coverageStatus,
     evaluatedAt: new Date().toISOString(),
   };
 }
@@ -164,51 +180,81 @@ function determineVariant(scenario: ClinicalScenario, hasRedFlags: boolean): str
 
 /**
  * Parse duration string to weeks
+ * Uses improved duration parser that handles complex phrases
  */
 function parseDuration(duration: string): number {
-  const lower = duration.toLowerCase();
+  const parsed = parseDurationAdvanced(duration);
+  return parsed.value;
+}
 
-  // Extract number
-  const numMatch = lower.match(/(\d+)/);
-  const num = numMatch ? parseInt(numMatch[1]) : 1;
+/**
+ * Determine coverage status from match result
+ */
+function determineCoverageStatus(matchResult: ReturnType<typeof findMatchingCriteria>): EvaluationResult['coverageStatus'] {
+  if (matchResult.matchQuality === 'exact') {
+    return 'DIRECT_MATCH';
+  } else if (matchResult.matchQuality === 'similar' && matchResult.criteria) {
+    return 'SIMILAR_MATCH';
+  } else if (matchResult.matchQuality === 'similar' || matchResult.matchQuality === 'general') {
+    return 'GENERAL_GUIDANCE';
+  } else {
+    return 'INSUFFICIENT_DATA';
+  }
+}
 
-  // Determine unit
-  if (lower.includes('day')) return num / 7;
-  if (lower.includes('week')) return num;
-  if (lower.includes('month')) return num * 4;
-  if (lower.includes('year')) return num * 52;
-
-  return num; // Default to weeks
+/**
+ * Determine confidence level from match result and coverage status
+ */
+function determineConfidenceLevel(
+  matchResult: ReturnType<typeof findMatchingCriteria>,
+  coverageStatus: EvaluationResult['coverageStatus']
+): EvaluationResult['confidenceLevel'] {
+  if (coverageStatus === 'DIRECT_MATCH') {
+    return 'High';
+  } else if (coverageStatus === 'SIMILAR_MATCH' && (matchResult.similarityScore || 0) >= 0.7) {
+    return 'High';
+  } else if (coverageStatus === 'SIMILAR_MATCH') {
+    return 'Medium';
+  } else if (coverageStatus === 'GENERAL_GUIDANCE' && (matchResult.similarityScore || 0) >= 0.5) {
+    return 'Medium';
+  } else if (coverageStatus === 'GENERAL_GUIDANCE') {
+    return 'Low';
+  } else {
+    return 'Low';
+  }
 }
 
 /**
  * Calculate appropriateness score
  */
 function calculateScore(
-  criteria: ReturnType<typeof findMatchingCriteria>,
-  scenario: ClinicalScenario
+  criteria: ACRCriteria | null | undefined,
+  scenario: ClinicalScenario,
+  coverageStatus: EvaluationResult['coverageStatus']
 ): AppropriatenessScore {
-  let score: number;
+  // Handle insufficient data case
+  if (coverageStatus === 'INSUFFICIENT_DATA' || !criteria || criteria.rating === 0) {
+    return {
+      value: 0,
+      category: 'may-be-appropriate',
+      description: 'Insufficient data to provide appropriateness rating. No matching ACR criteria found for this clinical scenario.',
+    };
+  }
 
-  if (criteria) {
-    score = criteria.rating;
+  let score: number = criteria.rating;
 
-    // Adjust for prior imaging (reduce score if recent imaging exists)
-    if (scenario.priorImaging && scenario.priorImaging.length > 0) {
-      const recentImaging = scenario.priorImaging.find(p => p.daysAgo < 30);
-      if (recentImaging) {
-        score = Math.max(1, score - 2); // Reduce by 2, minimum 1
-      }
+  // Adjust for prior imaging (reduce score if recent imaging exists)
+  if (scenario.priorImaging && scenario.priorImaging.length > 0) {
+    const recentImaging = scenario.priorImaging.find(p => p.daysAgo < 30);
+    if (recentImaging) {
+      score = Math.max(1, score - 2); // Reduce by 2, minimum 1
     }
+  }
 
-    // Adjust for red flags (increase score if red flags present)
-    const hasRedFlags = scenario.redFlags.some(rf => rf.present);
-    if (hasRedFlags && score < 7) {
-      score = Math.min(9, score + 2); // Increase by 2, maximum 9
-    }
-  } else {
-    // No matching criteria - default to middle
-    score = 5;
+  // Adjust for red flags (increase score if red flags present)
+  const hasRedFlags = scenario.redFlags.some(rf => rf.present);
+  if (hasRedFlags && score < 7) {
+    score = Math.min(9, score + 2); // Increase by 2, maximum 9
   }
 
   // Determine category
@@ -247,8 +293,10 @@ function scoreToTrafficLight(score: number): 'green' | 'yellow' | 'red' {
  */
 function generateReasoning(
   scenario: ClinicalScenario,
-  criteria: ReturnType<typeof findMatchingCriteria>,
-  score: AppropriatenessScore
+  criteria: ACRCriteria | null | undefined,
+  score: AppropriatenessScore,
+  matchResult: ReturnType<typeof findMatchingCriteria>,
+  coverageStatus: EvaluationResult['coverageStatus']
 ): string[] {
   const reasons: string[] = [];
 
@@ -267,15 +315,40 @@ function generateReasoning(
     reasons.push('No red flags identified based on clinical presentation.');
   }
 
-  // Explain the ACR criteria match
-  if (criteria) {
+  // Explain the ACR criteria match and coverage status
+  if (coverageStatus === 'INSUFFICIENT_DATA') {
     reasons.push(
-      `Matched to ACR Appropriateness Criteria: "${criteria.topic}" - "${criteria.variant}".`
+      'Insufficient data to provide appropriateness rating. No matching ACR criteria found for this clinical scenario.'
+    );
+    reasons.push(
+      'Recommendation: Consult ACR Appropriateness Criteria directly or seek expert radiology consultation for this specific case.'
+    );
+  } else if (coverageStatus === 'DIRECT_MATCH' && criteria) {
+    reasons.push(
+      `Direct match to ACR Appropriateness Criteria: "${criteria.topic}" - "${criteria.variant}".`
     );
     reasons.push(`ACR rating for ${criteria.procedure}: ${criteria.rating}/9.`);
+  } else if (coverageStatus === 'SIMILAR_MATCH' && criteria) {
+    reasons.push(
+      `Similar case match to ACR Appropriateness Criteria: "${criteria.topic}" - "${criteria.variant}".`
+    );
+    reasons.push(`ACR rating for ${criteria.procedure}: ${criteria.rating}/9.`);
+    reasons.push(
+      'Note: This is a similar case extrapolation. Clinical judgment should be applied as the match is not exact.'
+    );
+  } else if (coverageStatus === 'GENERAL_GUIDANCE' && matchResult.closestMatch) {
+    reasons.push(
+      `General guidance based on similar ACR criteria: "${matchResult.closestMatch.topic}" - "${matchResult.closestMatch.variant}".`
+    );
+    reasons.push(
+      `Reference ACR rating for ${matchResult.closestMatch.procedure}: ${matchResult.closestMatch.rating}/9.`
+    );
+    reasons.push(
+      'Note: This is general guidance based on similar cases. The recommendation may not directly apply to this specific scenario.'
+    );
   } else {
     reasons.push(
-      'No exact match found in ACR Appropriateness Criteria database. Score based on clinical principles.'
+      'No exact match found in ACR Appropriateness Criteria database. Consult ACR guidelines directly for this scenario.'
     );
   }
 
@@ -290,7 +363,9 @@ function generateReasoning(
   }
 
   // Final recommendation explanation
-  reasons.push(score.description);
+  if (score.value > 0) {
+    reasons.push(score.description);
+  }
 
   return reasons;
 }
@@ -439,6 +514,92 @@ function generateWarnings(scenario: ClinicalScenario): Warning[] {
     });
   }
 
+  // Check pregnancy status and radiation
+  const hasRadiation = scenario.proposedImaging.modality.includes('CT') ||
+    scenario.proposedImaging.modality.includes('X-ray') ||
+    scenario.proposedImaging.modality.includes('Nuclear') ||
+    scenario.proposedImaging.modality.includes('PET');
+
+  if (scenario.pregnancyStatus === 'pregnant' && hasRadiation) {
+    warnings.push({
+      type: 'pregnancy',
+      message: '🚨 CRITICAL: Patient is pregnant. Radiation exposure should be avoided. Consider MRI or Ultrasound alternatives.',
+      severity: 'critical',
+    });
+  } else if (scenario.pregnancyStatus === 'unknown' && 
+             scenario.sex !== 'male' &&
+             scenario.age >= 12 && 
+             scenario.age <= 50 && 
+             hasRadiation) {
+    warnings.push({
+      type: 'pregnancy',
+      message: '⚠️ Pregnancy status unknown. Please verify before ordering radiation-based imaging.',
+      severity: 'warning',
+    });
+  }
+
+  // Check contrast allergy
+  if (scenario.contrastAllergy?.hasAllergy) {
+    const needsContrast = scenario.proposedImaging.modality.includes('contrast') ||
+      scenario.proposedImaging.modality.includes('CT with contrast') ||
+      scenario.proposedImaging.modality.includes('MRI with contrast');
+    
+    if (needsContrast) {
+      const allergyType = scenario.contrastAllergy.allergyType || 'unknown';
+      warnings.push({
+        type: 'contrast-allergy',
+        message: `🚨 CRITICAL: Patient has ${allergyType === 'both' ? 'iodinated and gadolinium' : allergyType} contrast allergy. Avoid contrast-enhanced studies. Consider non-contrast alternatives.`,
+        severity: 'critical',
+      });
+    }
+  }
+
+  // Check renal function for contrast studies
+  const needsContrast = scenario.proposedImaging.modality.includes('contrast') ||
+    scenario.proposedImaging.modality.includes('CT with contrast') ||
+    scenario.proposedImaging.modality.includes('MRI with contrast');
+
+  if (needsContrast && scenario.renalFunction) {
+    const egfr = scenario.renalFunction.egfr;
+    const hasImpairment = scenario.renalFunction.hasImpairment;
+
+    if ((egfr !== undefined && egfr < 30) || hasImpairment) {
+      warnings.push({
+        type: 'renal-function',
+        message: '⚠️ WARNING: eGFR < 30 or known renal impairment. Risk of contrast-induced nephropathy. Consider non-contrast alternatives or consult nephrology.',
+        severity: 'warning',
+      });
+    } else if (egfr !== undefined && egfr >= 30 && egfr < 60) {
+      warnings.push({
+        type: 'renal-function',
+        message: 'ℹ️ Moderate renal impairment (eGFR 30-59). Monitor renal function after contrast administration.',
+        severity: 'info',
+      });
+    }
+  }
+
+  // Check medications
+  if (scenario.medications?.onMetformin && needsContrast) {
+    warnings.push({
+      type: 'medication',
+      message: 'ℹ️ Patient on metformin. Consider holding metformin 48 hours before and after contrast administration to reduce risk of lactic acidosis.',
+      severity: 'info',
+    });
+  }
+
+  if (scenario.medications?.onAnticoagulation) {
+    // Check if procedure might require intervention
+    const invasiveProcedures = ['biopsy', 'drainage', 'aspiration'];
+    const indicationLower = scenario.proposedImaging.indication.toLowerCase();
+    if (invasiveProcedures.some(proc => indicationLower.includes(proc))) {
+      warnings.push({
+        type: 'medication',
+        message: '⚠️ Patient on anticoagulation. May affect procedure timing and bleeding risk.',
+        severity: 'warning',
+      });
+    }
+  }
+
   return warnings;
 }
 
@@ -447,7 +608,7 @@ function generateWarnings(scenario: ClinicalScenario): Warning[] {
  */
 function getEvidenceLinks(
   topic: string,
-  criteria: ReturnType<typeof findMatchingCriteria>
+  criteria: ACRCriteria | null | undefined
 ): EvidenceLink[] {
   const links: EvidenceLink[] = [];
 

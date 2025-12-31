@@ -23,13 +23,75 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px; /* Base font size for clinical usability */
+  line-height: 1.5;
+}
+
+/* Font size classes for accessibility toggle */
+/* Font size classes for accessibility toggle */
+.font-size-normal {
+  font-size: 16px;
+}
+
+.font-size-large {
+  font-size: 18px;
+}
+
+.font-size-extra-large {
+  font-size: 20px;
+}
+
+/* Scale font sizes based on root font size */
+.font-size-large input,
+.font-size-large select,
+.font-size-large textarea,
+.font-size-large button {
+  font-size: 18px !important;
+}
+
+.font-size-extra-large input,
+.font-size-extra-large select,
+.font-size-extra-large textarea,
+.font-size-extra-large button {
+  font-size: 20px !important;
+}
+
+/* Ensure proper scaling for all text elements */
+.font-size-large * {
+  font-size: inherit;
+}
+
+.font-size-extra-large * {
+  font-size: inherit;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  /* Smooth scrolling for horizontal scroll */
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+  
+  .overflow-x-auto::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+  
+  /* Prevent text size adjustment on iOS */
+  input,
+  select,
+  textarea {
+    font-size: 16px !important; /* Prevents zoom on iOS */
+  }
 }
 
 /* Form input text visibility fixes */
 input,
 select,
 textarea {
-  color: #111827 !important; /* gray-900 */
+  color: #111827 !important; /* gray-900 - WCAG AA contrast: 13.8:1 */
+  font-size: 16px !important; /* Minimum 16px for clinical usability and prevents iOS zoom */
 }
 
 ::placeholder {
@@ -41,4 +103,139 @@ input::placeholder,
 textarea::placeholder {
   color: #6b7280 !important;
   opacity: 1;
+}
+
+/* Pulsing animation for inappropriate indicators */
+@keyframes pulse-red {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
+}
+
+.animate-pulse-red {
+  animation: pulse-red 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Colorblind Accessibility: Distinct Shapes */
+.clip-triangle {
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  -webkit-clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.clip-octagon {
+  clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+  -webkit-clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+}
+
+/* Striped pattern for yellow indicator (colorblind accessibility) */
+.pattern-stripes-yellow {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(0, 0, 0, 0.1) 10px,
+    rgba(0, 0, 0, 0.1) 20px
+  );
+}
+
+/* High Contrast Mode */
+.high-contrast {
+  --contrast-multiplier: 1.5;
+}
+
+.high-contrast .bg-teal-500 {
+  background-color: #0d9488 !important; /* Darker teal */
+}
+
+.high-contrast .bg-yellow-400 {
+  background-color: #f59e0b !important; /* Darker amber */
+}
+
+.high-contrast .bg-red-600 {
+  background-color: #dc2626 !important; /* Darker red */
+}
+
+.high-contrast .border-teal-700 {
+  border-color: #0f766e !important;
+}
+
+.high-contrast .border-yellow-600 {
+  border-color: #d97706 !important;
+}
+
+.high-contrast .border-red-800 {
+  border-color: #991b1b !important;
+}
+
+/* Smooth Transitions & Animations */
+* {
+  transition-property: color, background-color, border-color, opacity, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+/* Fade-in animation for results */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Smooth hover transitions */
+button, a, .hover-transition {
+  transition: all 0.2s ease-in-out;
+}
+
+button:hover, a:hover {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Consistent spacing scale */
+.space-section {
+  margin-bottom: 1.5rem; /* 24px */
+}
+
+.space-section-lg {
+  margin-bottom: 2rem; /* 32px */
+}
+
+.space-section-xl {
+  margin-bottom: 3rem; /* 48px */
+}
+
+/* Consistent padding scale */
+.padding-card {
+  padding: 1rem; /* 16px */
+}
+
+@media (min-width: 640px) {
+  .padding-card {
+    padding: 1.5rem; /* 24px */
+  }
+}
+
+@media (min-width: 1024px) {
+  .padding-card {
+    padding: 2rem; /* 32px */
+  }
 }

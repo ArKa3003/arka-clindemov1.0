@@ -21,6 +21,21 @@ export interface ClinicalScenario {
   // Red flags (important warning signs)
   redFlags: RedFlag[];
   
+  // Patient Safety Factors
+  pregnancyStatus?: 'not-pregnant' | 'pregnant' | 'unknown' | 'not-applicable';
+  contrastAllergy?: {
+    hasAllergy: boolean;
+    allergyType?: 'iodinated' | 'gadolinium' | 'both' | 'unknown';
+  };
+  renalFunction?: {
+    egfr?: number; // eGFR value in mL/min/1.73m²
+    hasImpairment?: boolean; // Known renal impairment checkbox
+  };
+  medications?: {
+    onAnticoagulation?: boolean; // Affects procedure timing
+    onMetformin?: boolean; // Affects contrast timing
+  };
+  
   // What the physician wants to order
   proposedImaging: ProposedImaging;
   
@@ -96,6 +111,12 @@ export interface EvaluationResult {
   // Evidence links
   evidenceLinks: EvidenceLink[];
   
+  // Confidence level in the recommendation
+  confidenceLevel: 'High' | 'Medium' | 'Low';
+  
+  // Coverage status indicating match quality
+  coverageStatus: 'DIRECT_MATCH' | 'SIMILAR_MATCH' | 'GENERAL_GUIDANCE' | 'INSUFFICIENT_DATA';
+  
   // Timestamp
   evaluatedAt: string;
 }
@@ -127,6 +148,16 @@ export interface ACRCriteria {
 }
 
 /**
+ * Match result with quality information
+ */
+export interface MatchResult {
+  criteria: ACRCriteria | null;
+  matchQuality: 'exact' | 'similar' | 'general' | 'none';
+  similarityScore?: number; // 0-1, higher is more similar
+  closestMatch?: ACRCriteria; // Closest matching criteria if no exact match
+}
+
+/**
  * Alternative imaging recommendations
  */
 export interface Alternative {
@@ -141,7 +172,7 @@ export interface Alternative {
  * Warnings to display
  */
 export interface Warning {
-  type: 'prior-imaging' | 'red-flag' | 'contraindication' | 'cost';
+  type: 'prior-imaging' | 'red-flag' | 'contraindication' | 'cost' | 'pregnancy' | 'contrast-allergy' | 'renal-function' | 'medication';
   message: string;
   severity: 'info' | 'warning' | 'critical';
 }

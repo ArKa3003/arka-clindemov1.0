@@ -4,6 +4,7 @@
 import { EvaluationResult } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
 import { Badge } from './ui/Badge';
+import { clsx } from 'clsx';
 
 interface EvidencePanelProps {
   result: EvaluationResult;
@@ -13,25 +14,28 @@ export function EvidencePanel({ result }: EvidencePanelProps) {
   const { warnings, evidenceLinks, matchedCriteria } = result;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Warnings */}
       {warnings.length > 0 && (
-        <Card variant="bordered">
+        <Card variant="bordered" className="transition-all duration-200 animate-in fade-in">
           <CardHeader>
             <CardTitle>Alerts & Warnings</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 sm:p-6">
             <div className="space-y-3">
               {warnings.map((warning, index) => (
                 <div
                   key={index}
-                  className={`p-3 rounded-lg ${
+                  className={clsx(
+                    'p-3 rounded-lg border transition-all duration-200',
                     warning.severity === 'critical'
-                      ? 'bg-red-50 border border-red-200'
+                      ? 'bg-red-50 border-red-200'
                       : warning.severity === 'warning'
-                        ? 'bg-yellow-50 border border-yellow-200'
-                        : 'bg-blue-50 border border-blue-200'
-                  }`}
+                        ? 'bg-yellow-50 border-yellow-200'
+                        : 'bg-blue-50 border-blue-200'
+                  )}
+                  role={warning.severity === 'critical' ? 'alert' : 'status'}
+                  aria-live={warning.severity === 'critical' ? 'assertive' : 'polite'}
                 >
                   <div className="flex items-start gap-2">
                     <Badge
@@ -43,10 +47,11 @@ export function EvidencePanel({ result }: EvidencePanelProps) {
                             : 'info'
                       }
                       size="sm"
+                      aria-label={`${warning.severity} ${warning.type.replace('-', ' ')}`}
                     >
                       {warning.type.replace('-', ' ')}
                     </Badge>
-                    <p className="text-sm text-gray-700">{warning.message}</p>
+                    <p className="text-base text-gray-700">{warning.message}</p>
                   </div>
                 </div>
               ))}
@@ -56,17 +61,17 @@ export function EvidencePanel({ result }: EvidencePanelProps) {
       )}
 
       {/* Evidence Links - CRITICAL FOR NON-DEVICE CDS */}
-      <Card variant="bordered">
+      <Card variant="bordered" className="transition-all duration-200 animate-in fade-in">
         <CardHeader>
           <CardTitle>
             Evidence & Guidelines
-            <span className="ml-2 text-xs font-normal text-gray-500">
+            <span className="ml-2 text-sm font-normal text-gray-500">
               (Independent review source)
             </span>
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <p className="text-sm text-gray-600 mb-4">
+        <CardContent className="p-4 sm:p-6">
+          <p className="text-base text-gray-600 mb-4">
             The following resources support this recommendation and allow you to
             independently verify the clinical basis:
           </p>
@@ -77,7 +82,7 @@ export function EvidencePanel({ result }: EvidencePanelProps) {
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-2 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm transition-all duration-200 min-h-[44px]"
               >
                 <span className="text-blue-600">
                   {link.type === 'acr-guideline' && '📋'}
@@ -85,10 +90,10 @@ export function EvidencePanel({ result }: EvidencePanelProps) {
                   {link.type === 'recommendation' && '✓'}
                 </span>
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-blue-600 hover:underline">
+                  <p className="text-base font-medium text-blue-600 hover:underline">
                     {link.title}
                   </p>
-                  <p className="text-xs text-gray-500">{link.url}</p>
+                  <p className="text-sm text-gray-500">{link.url}</p>
                 </div>
                 <span className="text-gray-400">→</span>
               </a>
@@ -96,7 +101,7 @@ export function EvidencePanel({ result }: EvidencePanelProps) {
           </div>
           {/* Transparency Notice */}
           <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-            <p className="text-xs text-gray-600">
+            <p className="text-sm text-gray-600">
               <strong>Transparency Notice:</strong> This recommendation is based
               on {matchedCriteria.source}. The ACR Appropriateness Criteria are
               evidence-based guidelines developed by expert panels. You maintain

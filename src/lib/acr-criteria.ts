@@ -1,7 +1,25 @@
 // src/lib/acr-criteria.ts
 // This contains the ACR Appropriateness Criteria
 // Source: American College of Radiology (acr.org)
-import { ACRCriteria } from '@/types';
+import { ACRCriteria, MatchResult } from '@/types';
+
+/**
+ * ACR Database Version Information
+ * Updated quarterly or within 30 days of new ACR publications
+ */
+export const ACR_DATABASE_VERSION = '2024.1';
+export const LAST_CRITERIA_UPDATE = '2024-01-15';
+export const CRITERIA_SOURCE_URL = 'https://acsearch.acr.org/list';
+
+/**
+ * Get formatted last updated date for display
+ */
+export function getLastUpdatedDisplay(): string {
+  const date = new Date(LAST_CRITERIA_UPDATE);
+  const month = date.toLocaleString('default', { month: 'long' });
+  const year = date.getFullYear();
+  return `${month} ${year}`;
+}
 
 /**
  * ACR Appropriateness Criteria Database
@@ -329,30 +347,127 @@ export function getCriteriaByProcedure(procedure: string): ACRCriteria[] {
 }
 
 /**
- * Find best matching criteria for a clinical scenario
+ * Calculate similarity score between two strings (0-1)
+ */
+function calculateSimilarity(str1: string, str2: string): number {
+  const s1 = str1.toLowerCase();
+  const s2 = str2.toLowerCase();
+  
+  // Exact match
+  if (s1 === s2) return 1.0;
+  
+  // One contains the other
+  if (s1.includes(s2) || s2.includes(s1)) return 0.8;
+  
+  // Word overlap
+  const words1 = s1.split(/\s+/);
+  const words2 = s2.split(/\s+/);
+  const commonWords = words1.filter(w => words2.includes(w));
+  if (commonWords.length > 0) {
+    return Math.min(0.7, commonWords.length / Math.max(words1.length, words2.length));
+  }
+  
+  // Character overlap
+  let matches = 0;
+  const minLen = Math.min(s1.length, s2.length);
+  for (let i = 0; i < minLen; i++) {
+    if (s1[i] === s2[i]) matches++;
+  }
+  return matches / Math.max(s1.length, s2.length);
+}
+
+/**
+ * Find best matching criteria for a clinical scenario with quality information
  */
 export function findMatchingCriteria(
   topic: string,
   variant: string,
   procedure: string
-): ACRCriteria | null {
-  // First, try exact match
-  const exactMatch = ACR_CRITERIA_DATABASE.find(c =>
-    c.topic.toLowerCase() === topic.toLowerCase() &&
-    c.procedure.toLowerCase().includes(procedure.toLowerCase())
-  );
-  if (exactMatch) return exactMatch;
+): MatchResult {
+  const topicLower = topic.toLowerCase();
+  const procedureLower = procedure.toLowerCase();
+  const variantLower = variant.toLowerCase();
 
-  // Then try partial match on topic
-  const topicMatches = getCriteriaByTopic(topic);
-  if (topicMatches.length > 0) {
-    // Find the one closest to the procedure
-    const procedureMatch = topicMatches.find(c =>
-      c.procedure.toLowerCase().includes(procedure.toLowerCase())
-    );
-    return procedureMatch || topicMatches[0];
+  // Step 1: Try exact match on topic and procedure
+  const exactMatch = ACR_CRITERIA_DATABASE.find(c =>
+    c.topic.toLowerCase() === topicLower &&
+    c.procedure.toLowerCase().includes(procedureLower)
+  );
+  if (exactMatch) {
+    return {
+      criteria: exactMatch,
+      matchQuality: 'exact',
+      similarityScore: 1.0,
+    };
   }
-  return null;
+
+  // Step 2: Find all topic matches
+  const topicMatches = ACR_CRITERIA_DATABASE.filter(c =>
+    c.topic.toLowerCase().includes(topicLower) ||
+    topicLower.includes(c.topic.toLowerCase())
+  );
+
+  if (topicMatches.length === 0) {
+    // No topic matches - find closest by procedure or general guidance
+    const allMatches = ACR_CRITERIA_DATABASE.map(c => ({
+      criteria: c,
+      score: calculateSimilarity(procedureLower, c.procedure.toLowerCase()),
+    })).sort((a, b) => b.score - a.score);
+
+    if (allMatches.length > 0 && allMatches[0].score > 0.3) {
+      return {
+        criteria: null,
+        matchQuality: 'general',
+        similarityScore: allMatches[0].score,
+        closestMatch: allMatches[0].criteria,
+      };
+    }
+
+    return {
+      criteria: null,
+      matchQuality: 'none',
+      similarityScore: 0,
+    };
+  }
+
+  // Step 3: Find best match within topic matches
+  const scoredMatches = topicMatches.map(c => {
+    const procedureScore = calculateSimilarity(procedureLower, c.procedure.toLowerCase());
+    const variantScore = calculateSimilarity(variantLower, c.variant.toLowerCase());
+    const combinedScore = (procedureScore * 0.7) + (variantScore * 0.3);
+    
+    return {
+      criteria: c,
+      score: combinedScore,
+      procedureScore,
+      variantScore,
+    };
+  }).sort((a, b) => b.score - a.score);
+
+  const bestMatch = scoredMatches[0];
+
+  // Determine match quality
+  if (bestMatch.score >= 0.8) {
+    return {
+      criteria: bestMatch.criteria,
+      matchQuality: 'similar',
+      similarityScore: bestMatch.score,
+    };
+  } else if (bestMatch.score >= 0.5) {
+    return {
+      criteria: null,
+      matchQuality: 'similar',
+      similarityScore: bestMatch.score,
+      closestMatch: bestMatch.criteria,
+    };
+  } else {
+    return {
+      criteria: null,
+      matchQuality: 'general',
+      similarityScore: bestMatch.score,
+      closestMatch: bestMatch.criteria,
+    };
+  }
 }
 
 /**

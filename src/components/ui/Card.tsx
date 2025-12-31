@@ -12,7 +12,8 @@ export function Card({ children, className, variant = 'default' }: CardProps) {
   return (
     <div
       className={clsx(
-        'rounded-lg bg-white p-6',
+        'rounded-lg bg-white transition-all duration-200',
+        'p-4 sm:p-6',
         variant === 'bordered' && 'border border-gray-200',
         variant === 'elevated' && 'shadow-lg',
         variant === 'default' && 'shadow-md',
@@ -32,7 +33,7 @@ export function CardHeader({
   className?: string;
 }) {
   return (
-    <div className={clsx('mb-4 border-b border-gray-100 pb-4', className)}>
+    <div className={clsx('mb-4 sm:mb-6 border-b border-gray-100 pb-4 transition-colors duration-200', className)}>
       {children}
     </div>
   );
@@ -46,7 +47,7 @@ export function CardTitle({
   className?: string;
 }) {
   return (
-    <h3 className={clsx('text-lg font-semibold text-gray-900', className)}>
+    <h3 className={clsx('text-xl font-semibold text-gray-900', className)}>
       {children}
     </h3>
   );
