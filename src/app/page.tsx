@@ -121,6 +121,13 @@ export default function Home() {
               >
                 How It Works
               </button>
+              <a
+                href="/feedback"
+                className="text-base text-gray-700 hover:text-gray-900 font-medium min-h-[44px] px-3 py-2 rounded-md hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                aria-label="Provide feedback about ARKA"
+              >
+                Feedback
+              </a>
               {result && (
                 <button
                   onClick={handleReset}
