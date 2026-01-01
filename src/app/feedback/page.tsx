@@ -60,7 +60,7 @@ export default function FeedbackPage() {
                 We'll review your input and reach out within 48 hours if you indicated interest in a pilot.
               </p>
               <Button
-                onClick={() => router.push('/')}
+                onClick={() => router.push('/?returnToSplash=true')}
                 variant="primary"
                 size="lg"
                 className="min-h-[44px]"

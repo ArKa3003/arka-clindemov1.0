@@ -59,13 +59,13 @@ export function FontSizeToggle() {
     <button
       onClick={cycleFontSize}
       className={clsx(
-        'fixed bottom-4 right-4 z-50',
+        'fixed top-[72px] right-3 sm:top-[88px] sm:right-4 z-40',
         'flex items-center justify-center',
-        'w-12 h-12 rounded-full',
+        'w-12 h-12 sm:w-14 sm:h-14 rounded-full',
         'bg-blue-600 text-white',
-        'shadow-lg hover:shadow-xl',
-        'hover:bg-blue-700',
-        'transition-all duration-200',
+        'shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)]',
+        'hover:bg-blue-700 hover:scale-105 active:scale-95',
+        'transition-all duration-300 ease-in-out',
         'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
         'text-lg font-bold',
         'min-h-[44px] min-w-[44px]' // Touch target size

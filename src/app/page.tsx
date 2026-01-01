@@ -1,7 +1,8 @@
 // src/app/page.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { ClinicalScenario, EvaluationResult } from '@/types';
 import { evaluateImaging } from '@/lib/evaluate-imaging';
 import { getDemoScenario, getAllDemoScenarios } from '@/lib/demo-scenarios';
@@ -56,7 +57,8 @@ function DemoScenarioSelector({
   );
 }
 
-export default function Home() {
+function HomeContent() {
+  const searchParams = useSearchParams();
   const [currentView, setCurrentView] = useState<'splash' | 'demo'>('splash');
   const [result, setResult] = useState<EvaluationResult | null>(null);
   const [currentScenario, setCurrentScenario] =
@@ -64,6 +66,15 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [showIntegrationModal, setShowIntegrationModal] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // Check if we should return to splash screen (e.g., from feedback page)
+  useEffect(() => {
+    if (searchParams?.get('returnToSplash') === 'true') {
+      setCurrentView('splash');
+      // Clean up URL parameter
+      window.history.replaceState({}, '', '/');
+    }
+  }, [searchParams]);
 
   const handleEvaluate = async (scenario: ClinicalScenario) => {
     setIsLoading(true);
@@ -378,5 +389,13 @@ export default function Home() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-100" />}>
+      <HomeContent />
+    </Suspense>
   );
 }

@@ -145,33 +145,154 @@ textarea::placeholder {
   );
 }
 
-/* High Contrast Mode */
+/* High Contrast / Dark Mode */
 .high-contrast {
   --contrast-multiplier: 1.5;
 }
 
-.high-contrast .bg-teal-500 {
+/* Dark Mode - Black background, white text */
+html.high-contrast,
+html.high-contrast body {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* Apply dark background to main containers and common Tailwind classes */
+html.high-contrast .min-h-screen,
+html.high-contrast > div,
+html.high-contrast .bg-gray-100,
+html.high-contrast .bg-gray-50 {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* Override specific background colors */
+html.high-contrast .bg-white,
+html.high-contrast .bg-gray-50,
+html.high-contrast .bg-gray-100 {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+}
+
+html.high-contrast .bg-gray-200 {
+  background-color: #2a2a2a !important;
+  color: #ffffff !important;
+}
+
+html.high-contrast .bg-blue-50,
+html.high-contrast .bg-blue-100 {
+  background-color: #1a1a3a !important;
+  color: #ffffff !important;
+}
+
+html.high-contrast .bg-amber-50 {
+  background-color: #3a2a1a !important;
+  color: #ffffff !important;
+}
+
+html.high-contrast .bg-red-50 {
+  background-color: #3a1a1a !important;
+  color: #ffffff !important;
+}
+
+/* Text colors - use html.high-contrast for better specificity */
+html.high-contrast .text-gray-900,
+html.high-contrast .text-gray-800,
+html.high-contrast .text-gray-700,
+html.high-contrast .text-gray-600,
+html.high-contrast h1,
+html.high-contrast h2,
+html.high-contrast h3,
+html.high-contrast h4,
+html.high-contrast p,
+html.high-contrast span,
+html.high-contrast div {
+  color: #ffffff !important;
+}
+
+html.high-contrast .text-gray-500 {
+  color: #cccccc !important;
+}
+
+html.high-contrast .text-gray-400 {
+  color: #aaaaaa !important;
+}
+
+/* Borders */
+html.high-contrast .border-gray-200,
+html.high-contrast .border-gray-300 {
+  border-color: #444444 !important;
+}
+
+html.high-contrast .border-gray-400 {
+  border-color: #666666 !important;
+}
+
+/* Input fields */
+html.high-contrast input,
+html.high-contrast select,
+html.high-contrast textarea {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+  border-color: #666666 !important;
+}
+
+html.high-contrast input::placeholder,
+html.high-contrast textarea::placeholder {
+  color: #888888 !important;
+}
+
+/* Buttons */
+html.high-contrast .bg-blue-600 {
+  background-color: #0066cc !important;
+}
+
+html.high-contrast .bg-blue-700 {
+  background-color: #0052a3 !important;
+}
+
+/* Traffic light colors (keep visible but adjust) */
+html.high-contrast .bg-teal-500 {
   background-color: #0d9488 !important; /* Darker teal */
 }
 
-.high-contrast .bg-yellow-400 {
+html.high-contrast .bg-yellow-400 {
   background-color: #f59e0b !important; /* Darker amber */
 }
 
-.high-contrast .bg-red-600 {
+html.high-contrast .bg-red-600 {
   background-color: #dc2626 !important; /* Darker red */
 }
 
-.high-contrast .border-teal-700 {
+html.high-contrast .border-teal-700 {
   border-color: #0f766e !important;
 }
 
-.high-contrast .border-yellow-600 {
+html.high-contrast .border-yellow-600 {
   border-color: #d97706 !important;
 }
 
-.high-contrast .border-red-800 {
+html.high-contrast .border-red-800 {
   border-color: #991b1b !important;
+}
+
+/* Links */
+html.high-contrast a {
+  color: #66b3ff !important;
+}
+
+html.high-contrast a:hover {
+  color: #99ccff !important;
+}
+
+/* Shadows - make them visible in dark mode */
+html.high-contrast .shadow-sm,
+html.high-contrast .shadow {
+  box-shadow: 0 1px 2px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+html.high-contrast .shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(255, 255, 255, 0.1) !important;
 }
 
 /* Smooth Transitions & Animations */
