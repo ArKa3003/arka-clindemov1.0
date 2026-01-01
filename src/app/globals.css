@@ -210,6 +210,33 @@ button:hover, a:hover {
   transition: all 0.2s ease-in-out;
 }
 
+/* Splash Screen Animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes pulse-fade {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.splash-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.splash-pulse {
+  animation: pulse-fade 2s ease-in-out infinite;
+}
+
 /* Consistent spacing scale */
 .space-section {
   margin-bottom: 1.5rem; /* 24px */

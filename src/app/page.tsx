@@ -18,6 +18,7 @@ import { WorkflowActions } from '@/components/WorkflowActions';
 import { IntegrationArchitecture } from '@/components/IntegrationArchitecture';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ResultsSkeleton } from '@/components/SkeletonLoader';
+import { SplashScreen } from '@/components/SplashScreen';
 
 function DemoScenarioSelector({
   onSelect,
@@ -56,11 +57,13 @@ function DemoScenarioSelector({
 }
 
 export default function Home() {
+  const [currentView, setCurrentView] = useState<'splash' | 'demo'>('splash');
   const [result, setResult] = useState<EvaluationResult | null>(null);
   const [currentScenario, setCurrentScenario] =
     useState<ClinicalScenario | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showIntegrationModal, setShowIntegrationModal] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const handleEvaluate = async (scenario: ClinicalScenario) => {
     setIsLoading(true);
@@ -78,10 +81,46 @@ export default function Home() {
   const handleReset = () => {
     setResult(null);
     setCurrentScenario(null);
+    // Return to splash screen
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentView('splash');
+      setIsTransitioning(false);
+    }, 500);
+  };
+
+  const handleSplashContinue = () => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentView('demo');
+      setIsTransitioning(false);
+    }, 500);
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
+    <div className="min-h-screen bg-gray-100 flex flex-col relative">
+      {/* Splash Screen */}
+      {currentView === 'splash' && (
+        <div
+          style={{
+            opacity: isTransitioning ? 0 : 1,
+            transition: 'opacity 500ms ease-in-out',
+            pointerEvents: isTransitioning ? 'none' : 'auto',
+          }}
+        >
+          <SplashScreen onContinue={handleSplashContinue} />
+        </div>
+      )}
+
+      {/* Main Demo Content */}
+      {currentView === 'demo' && (
+        <div
+          style={{
+            opacity: isTransitioning ? 0 : 1,
+            transition: 'opacity 500ms ease-in-out',
+            pointerEvents: isTransitioning ? 'none' : 'auto',
+          }}
+        >
       {/* Skip to main content link for screen readers */}
       <a
         href="#main-content"
@@ -336,6 +375,8 @@ export default function Home() {
         isOpen={showIntegrationModal}
         onClose={() => setShowIntegrationModal(false)}
       />
+        </div>
+      )}
     </div>
   );
 }
