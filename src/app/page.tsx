@@ -103,8 +103,14 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               {/* Logo */}
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600">
-                <span className="text-xl font-bold text-white">A</span>
+              <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center flex-shrink-0">
+                <img
+                  src="/arka-logo.svg"
+                  alt="ARKA Logo"
+                  className="h-full w-full object-contain"
+                  width="40"
+                  height="40"
+                />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">ARKA</h1>
