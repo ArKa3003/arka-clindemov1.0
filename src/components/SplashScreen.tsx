@@ -53,7 +53,7 @@ export function SplashScreen({ onContinue }: SplashScreenProps) {
       {/* Glow effect behind logo */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div
-          className="w-96 h-96 rounded-full blur-3xl opacity-20"
+          className="w-[500px] h-[500px] sm:w-[600px] sm:h-[600px] md:w-[700px] md:h-[700px] rounded-full blur-3xl opacity-20"
           style={{
             background: 'radial-gradient(circle, rgba(91, 155, 213, 0.4) 0%, rgba(13, 25, 41, 0) 70%)',
           }}
@@ -61,18 +61,18 @@ export function SplashScreen({ onContinue }: SplashScreenProps) {
       </div>
 
       {/* Logo with floating animation */}
-      <div className="relative z-10 flex items-center justify-center splash-float">
+      <div className="relative z-10 flex items-center justify-center splash-float px-4 py-8 sm:py-12">
         <img
           src="/arka-logo.svg"
           alt="ARKA Logo"
-          className="w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 object-contain"
-          width="384"
-          height="432"
+          className="w-[400px] h-[450px] sm:w-[500px] sm:h-[562px] md:w-[600px] md:h-[675px] object-contain max-w-[90vw] max-h-[70vh]"
+          width="600"
+          height="675"
         />
       </div>
 
       {/* Continue text with pulse animation */}
-      <div className="absolute bottom-12 sm:bottom-16 left-1/2 transform -translate-x-1/2 z-10 splash-pulse">
+      <div className="absolute bottom-12 sm:bottom-16 md:bottom-20 left-1/2 transform -translate-x-1/2 z-10 splash-pulse">
         <p className="text-white/80 text-sm sm:text-base font-medium text-center px-4">
           Click anywhere or press Enter to continue
         </p>
