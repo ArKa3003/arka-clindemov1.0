@@ -133,7 +133,7 @@ export function WorkflowActions({
       </CardHeader>
       <CardContent className="p-4 sm:p-6 space-y-4">
         {/* Primary Action Buttons */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
           {/* Accept Recommendation */}
           {!showAcceptConfirmation ? (
             <Button
@@ -252,8 +252,8 @@ export function WorkflowActions({
         </div>
 
         {/* Documentation Helpers */}
-        <div className="border-t pt-4">
-          <h3 className="text-base font-semibold text-gray-900 mb-3">
+        <div className="border-t pt-4 mt-4">
+          <h3 className="text-base font-semibold text-gray-900 mb-3 mt-2">
             Documentation Helpers
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -278,14 +278,14 @@ export function WorkflowActions({
 
         {/* Audit Log */}
         {auditLog.length > 0 && (
-          <div className="border-t pt-4">
-            <div className="flex items-center justify-between mb-3">
+          <div className="border-t pt-4 mt-4">
+            <div className="flex items-center justify-between mb-3 mt-2 gap-2">
               <h3 className="text-base font-semibold text-gray-900">
                 Audit Log
               </h3>
               <button
                 onClick={() => setShowAuditLog(!showAuditLog)}
-                className="text-sm text-blue-600 hover:text-blue-800 min-h-[44px] px-2"
+                className="text-sm text-blue-600 hover:text-blue-800 min-h-[44px] px-2 flex-shrink-0 whitespace-nowrap"
               >
                 {showAuditLog ? 'Hide' : 'Show'}
               </button>

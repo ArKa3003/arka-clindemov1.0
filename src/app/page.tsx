@@ -150,8 +150,8 @@ function HomeContent() {
       {/* Header */}
       <header className="bg-white shadow-sm" role="banner">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+            <div className="flex items-center gap-3 flex-shrink-0">
               {/* Logo */}
               <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center flex-shrink-0">
                 <img
@@ -169,17 +169,17 @@ function HomeContent() {
                 </p>
               </div>
             </div>
-            <nav className="flex items-center gap-4" role="navigation" aria-label="Main navigation">
+            <nav className="flex flex-wrap items-center gap-2 sm:gap-4" role="navigation" aria-label="Main navigation">
               <button
                 onClick={() => setShowIntegrationModal(true)}
-                className="text-base text-gray-700 hover:text-gray-900 font-medium min-h-[44px] px-3 py-2 rounded-md hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="text-base text-gray-700 hover:text-gray-900 font-medium min-h-[44px] px-3 py-2 rounded-md hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap"
                 aria-label="Learn how ARKA integrates with EHR systems"
               >
                 How It Works
               </button>
               <a
                 href="/feedback"
-                className="text-base text-gray-700 hover:text-gray-900 font-medium min-h-[44px] px-3 py-2 rounded-md hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="text-base text-gray-700 hover:text-gray-900 font-medium min-h-[44px] px-3 py-2 rounded-md hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap"
                 aria-label="Provide feedback about ARKA"
               >
                 Feedback
@@ -187,7 +187,7 @@ function HomeContent() {
               {result && (
                 <button
                   onClick={handleReset}
-                  className="text-base text-blue-600 hover:text-blue-700 min-h-[44px] px-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
+                  className="text-base text-blue-600 hover:text-blue-700 min-h-[44px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded whitespace-nowrap"
                   aria-label="Start a new evaluation"
                 >
                   ← New Evaluation
@@ -202,7 +202,7 @@ function HomeContent() {
       </header>
 
       {/* Main Content */}
-      <main id="main-content" className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8" role="main">
+      <main id="main-content" className="mx-auto max-w-7xl px-4 py-6 sm:py-8 sm:px-6 lg:px-8" role="main">
         <ErrorBoundary>
           {isLoading ? (
             // Loading State
@@ -238,11 +238,11 @@ function HomeContent() {
           ) : !result ? (
             // Input Form
             <div className="mx-auto max-w-2xl animate-in fade-in">
-              <section className="mb-8 text-center" aria-labelledby="evaluation-title">
-                <h2 id="evaluation-title" className="text-3xl font-bold text-gray-900 mb-2">
+              <section className="mb-6 sm:mb-8 text-center pt-2" aria-labelledby="evaluation-title">
+                <h2 id="evaluation-title" className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 px-2">
                   Imaging Appropriateness Evaluation
                 </h2>
-                <p className="text-base text-gray-600">
+                <p className="text-base text-gray-600 px-2">
                   Enter the clinical scenario to receive evidence-based
                   recommendations aligned with ACR Appropriateness Criteria.
                 </p>

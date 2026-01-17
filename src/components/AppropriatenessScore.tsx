@@ -149,15 +149,15 @@ export function AppropriatenessScore({ result, scenario, onCopyJustification }: 
         </div>
 
         {/* BOTTOM SECTION: Detailed Reasoning (Collapsible) */}
-        <div className="border-t border-gray-200 pt-4 sm:pt-6">
+        <div className="border-t border-gray-200 pt-4 sm:pt-6 mt-4">
           <button
             onClick={() => setIsReasoningExpanded(!isReasoningExpanded)}
-            className="flex items-center justify-between w-full mb-4 text-left p-3 -m-3 rounded-lg hover:bg-gray-50 transition-colors min-h-[44px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="flex items-center justify-between w-full mb-4 text-left p-3 -m-3 rounded-lg hover:bg-gray-50 transition-colors min-h-[44px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 gap-2"
             aria-expanded={isReasoningExpanded}
             aria-controls="detailed-reasoning"
             aria-label={isReasoningExpanded ? 'Collapse detailed clinical reasoning' : 'Expand detailed clinical reasoning'}
           >
-            <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-900 flex-1 min-w-0">
               {isReasoningExpanded ? 'Hide' : 'Show'} Detailed Clinical Reasoning
             </h3>
             <svg
@@ -192,7 +192,7 @@ export function AppropriatenessScore({ result, scenario, onCopyJustification }: 
                 <Button
                   onClick={handleCopyJustification}
                   variant="outline"
-                  className="w-full min-h-[44px]"
+                  className="w-full min-h-[44px] mt-2"
                 >
                   <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
