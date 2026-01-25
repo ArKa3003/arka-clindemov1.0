@@ -2,12 +2,15 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { EvaluationResult, ClinicalScenario } from '@/types';
 import { Card, CardContent } from './ui/Card';
 import { Badge } from './ui/Badge';
 import { Button } from './ui/Button';
 import { clsx } from 'clsx';
 import { AppropriatenessIndicator } from './AppropriatenessIndicator';
+import { RecommendationDisclaimer } from './fda/RecommendationDisclaimer';
+import { FDA_COMPLIANCE } from '@/lib/constants/fda-compliance';
 
 interface AppropriatenessScoreProps {
   result: EvaluationResult;
@@ -47,10 +50,6 @@ export function AppropriatenessScore({ result, scenario, onCopyJustification }: 
     }
   };
 
-  // Get ACR source link
-  const acrLink = evidenceLinks.find(link => link.type === 'acr-guideline')?.url || 
-    `https://acsearch.acr.org/list?q=${encodeURIComponent(matchedCriteria.topic)}`;
-
   return (
     <div role="region" aria-labelledby="appropriateness-result-title">
       <Card variant="elevated" className="overflow-hidden transition-all duration-300 animate-in fade-in">
@@ -86,16 +85,17 @@ export function AppropriatenessScore({ result, scenario, onCopyJustification }: 
               <CoverageStatusBadge status={coverageStatus} />
               <ConfidenceLevelBadge level={confidenceLevel} />
             </div>
+            <RecommendationDisclaimer />
           </div>
         </div>
       </div>
 
       <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6 transition-all duration-200">
-        {/* MIDDLE SECTION: ACR Source Citation + Key Clinical Factors */}
+        {/* MIDDLE SECTION: AIIE Evidence Basis + Key Clinical Factors */}
         <div className="space-y-4">
-          {/* ACR Source Citation */}
+          {/* AIIE Evidence Basis */}
           <div className="rounded-lg bg-blue-50 border border-blue-200 p-4">
-            <h3 className="font-semibold text-gray-900 mb-2">ACR Source Citation</h3>
+            <h3 className="font-semibold text-gray-900 mb-2">AIIE Evidence Basis</h3>
             {coverageStatus !== 'INSUFFICIENT_DATA' ? (
               <>
                 <p className="text-base text-gray-700 mb-2">
@@ -106,28 +106,20 @@ export function AppropriatenessScore({ result, scenario, onCopyJustification }: 
                   <strong>Based on:</strong> {matchedCriteria.source}
                   {matchedCriteria.lastReviewed && matchedCriteria.lastReviewed !== 'N/A' && (
                     <span className="text-gray-600">
-                      {' '}(Revised {matchedCriteria.lastReviewed})
+                      {' '}(Evidence: {matchedCriteria.lastReviewed})
                     </span>
                   )}
                 </p>
-                <p className="text-sm text-gray-600 mb-3 italic">
-                  ACR Appropriateness Criteria document reference
-                </p>
-                <a
-                  href={acrLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-base font-medium text-blue-600 hover:text-blue-800 hover:underline"
-                >
-                  <span>View ACR Guidelines</span>
+                <Link href="/methodology" className="inline-flex items-center gap-2 text-base font-medium text-blue-600 hover:text-blue-800 hover:underline">
+                  <span>View AIIE Methodology</span>
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                   </svg>
-                </a>
+                </Link>
               </>
             ) : (
               <p className="text-base text-amber-800">
-                No matching ACR criteria found. Consult ACR Appropriateness Criteria directly or seek expert radiology consultation.
+                No matching criteria found. Seek expert radiology consultation or review AIIE methodology.
               </p>
             )}
           </div>
@@ -245,7 +237,7 @@ function extractKeyFactors(
     /no red flags/i,
     /prior imaging/i,
     /recent .* performed/i,
-    /ACR rating/i,
+    /AIIE|score|rating/i,
     /direct match/i,
     /similar case/i,
   ];
@@ -288,23 +280,22 @@ function generateClinicalJustification(
   text += `Duration: ${scenario.duration}\n`;
   text += `Proposed Imaging: ${scenario.proposedImaging.modality} - ${scenario.proposedImaging.bodyPart}\n\n`;
   text += `RECOMMENDATION: ${recommendation}\n\n`;
-  text += `ACR Appropriateness Score: ${result.appropriatenessScore.value}/9\n`;
+  text += `AIIE Appropriateness Score: ${result.appropriatenessScore.value}/9\n`;
   text += `Confidence Level: ${result.confidenceLevel}\n`;
   text += `Coverage Status: ${result.coverageStatus}\n\n`;
   text += `KEY CLINICAL FACTORS:\n`;
   keyFactors.forEach((factor, idx) => {
     text += `${idx + 1}. ${factor}\n`;
   });
-  text += `\nACR Source: ${result.matchedCriteria.source}\n`;
+  text += `\nAIIE Evidence: ${result.matchedCriteria.source}\n`;
   text += `Topic: ${result.matchedCriteria.topic}\n`;
   if (result.matchedCriteria.variant) {
     text += `Variant: ${result.matchedCriteria.variant}\n`;
   }
-  text += `\nGenerated by ARKA Clinical Decision Support Tool\n`;
-  text += `Based on ACR Appropriateness Criteria\n`;
+  text += `\nGenerated by ARKA Imaging Intelligence Engine (AIIE) Clinical Decision Support\n\n`;
+  text += `${FDA_COMPLIANCE.PRINT_AND_COPY_DISCLAIMER}\n`;
   return text;
 }
-
 
 // Coverage Status Badge Component
 function CoverageStatusBadge({

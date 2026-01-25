@@ -75,7 +75,7 @@ export function DisclaimerBanner() {
               CLINICAL DECISION SUPPORT TOOL
             </p>
             <p className="text-base text-blue-800">
-              This system provides recommendations based on ACR Appropriateness Criteria to assist clinical decision-making. 
+              This system provides recommendations powered by AIIE proprietary methodology to assist clinical decision-making. 
               <strong className="font-semibold"> It does not constitute medical advice.</strong> Final imaging decisions remain 
               the responsibility of the ordering healthcare provider.
             </p>

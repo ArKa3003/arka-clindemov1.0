@@ -11,12 +11,21 @@ import { AppropriatenessScore } from '@/components/AppropriatenessScore';
 import { AlternativesList } from '@/components/AlternativesList';
 import { EvidencePanel } from '@/components/EvidencePanel';
 import { PatientSafetySidebar } from '@/components/PatientSafetySidebar';
-import { DisclaimerBanner } from '@/components/DisclaimerBanner';
-import { ACRVersionBadge } from '@/components/ACRVersionBadge';
+import {
+  hasAcknowledgedFirstUse,
+  FirstUseAcknowledgment,
+  shouldSkipFirstUseAcknowledgment,
+} from '@/components/fda/FirstUseAcknowledgment';
+import { FDAComplianceModal } from '@/components/fda/FDAComplianceModal';
+import { RecommendationDisclaimer } from '@/components/fda/RecommendationDisclaimer';
+import { MethodologyBadge } from '@/components/fda/MethodologyBadge';
+import Link from 'next/link';
+import { Shield, Lightbulb } from 'lucide-react';
 import { FontSizeToggle } from '@/components/FontSizeToggle';
 import { HighContrastToggle } from '@/components/HighContrastToggle';
 import { WorkflowActions } from '@/components/WorkflowActions';
-import { IntegrationArchitecture } from '@/components/IntegrationArchitecture';
+import HowItWorksModal from '@/components/HowItWorksModal';
+import SHAPExplanation from '@/components/results/SHAPExplanation';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ResultsSkeleton } from '@/components/SkeletonLoader';
 import { SplashScreen } from '@/components/SplashScreen';
@@ -64,8 +73,17 @@ function HomeContent() {
   const [currentScenario, setCurrentScenario] =
     useState<ClinicalScenario | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [showIntegrationModal, setShowIntegrationModal] = useState(false);
+  const [showHowItWorks, setShowHowItWorks] = useState(false);
+  const [showFDAComplianceModal, setShowFDAComplianceModal] = useState(false);
+  const [showFirstUseAck, setShowFirstUseAck] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // First-use FDA acknowledgment: when entering demo, show if not yet acknowledged
+  useEffect(() => {
+    if (currentView !== 'demo') return;
+    if (shouldSkipFirstUseAcknowledgment() || hasAcknowledgedFirstUse()) return;
+    setShowFirstUseAck(true);
+  }, [currentView]);
 
   // Check if we should return to splash screen (e.g., from feedback page)
   useEffect(() => {
@@ -144,62 +162,59 @@ function HomeContent() {
       <FontSizeToggle />
       <HighContrastToggle />
       
-      {/* Disclaimer Banner */}
-      <DisclaimerBanner />
-      
+      {/* First-use FDA acknowledgment modal (blocks until acknowledged) */}
+      {showFirstUseAck && (
+        <FirstUseAcknowledgment
+          onAcknowledge={() => setShowFirstUseAck(false)}
+          isBlocking
+        />
+      )}
+
+      {/* FDA Compliance Modal (from banner or footer link) */}
+      <FDAComplianceModal
+        isOpen={showFDAComplianceModal}
+        onClose={() => setShowFDAComplianceModal(false)}
+      />
+
       {/* Header */}
-      <header className="bg-white shadow-sm" role="banner">
-        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
-            <div className="flex items-center gap-3 flex-shrink-0">
-              {/* Logo */}
-              <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center flex-shrink-0">
-                <img
-                  src="/arka-logo.svg"
-                  alt="ARKA Logo"
-                  className="h-full w-full object-contain"
-                  width="40"
-                  height="40"
-                />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">ARKA</h1>
-                <p className="text-sm text-gray-500">
-                  Advanced Radio-imaging Knowledge Architecture
-                </p>
-              </div>
+      <header className="bg-white border-b sticky top-0 z-40" role="banner">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-teal-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">ARKA</span>
             </div>
-            <nav className="flex flex-wrap items-center gap-2 sm:gap-4" role="navigation" aria-label="Main navigation">
-              <button
-                onClick={() => setShowIntegrationModal(true)}
-                className="text-base text-gray-700 hover:text-gray-900 font-medium min-h-[44px] px-3 py-2 rounded-md hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap"
-                aria-label="Learn how ARKA integrates with EHR systems"
-              >
-                How It Works
+            <div>
+              <div className="font-bold text-gray-900">ARKA</div>
+              <div className="text-xs text-gray-500">Imaging Intelligence Engine</div>
+            </div>
+            <span className="hidden md:inline-flex px-2 py-0.5 bg-teal-50 text-teal-700 text-xs font-medium rounded-full border border-teal-200">
+              Non-Device CDS
+            </span>
+          </Link>
+          <nav className="flex items-center gap-6">
+            <button onClick={() => setShowHowItWorks(true)} className="text-gray-600 hover:text-gray-900 text-sm">
+              How It Works
+            </button>
+            <Link href="/feedback" className="text-gray-600 hover:text-gray-900 text-sm">
+              Feedback
+            </Link>
+            {result && (
+              <button onClick={handleReset} className="text-blue-600 hover:text-blue-700 text-sm" aria-label="Start a new evaluation">
+                ← New Evaluation
               </button>
-              <a
-                href="/feedback"
-                className="text-base text-gray-700 hover:text-gray-900 font-medium min-h-[44px] px-3 py-2 rounded-md hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap"
-                aria-label="Provide feedback about ARKA"
-              >
-                Feedback
-              </a>
-              {result && (
-                <button
-                  onClick={handleReset}
-                  className="text-base text-blue-600 hover:text-blue-700 min-h-[44px] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded whitespace-nowrap"
-                  aria-label="Start a new evaluation"
-                >
-                  ← New Evaluation
-                </button>
-              )}
-              <div className="hidden sm:block">
-                <ACRVersionBadge showTooltip={true} variant="compact" />
-              </div>
-            </nav>
-          </div>
+            )}
+          </nav>
+          <div className="text-sm text-gray-500">AIIE v2.0 | Jan 2026</div>
         </div>
       </header>
+
+      {/* FDA Banner */}
+      <div className="bg-gradient-to-r from-cyan-600 to-teal-600 text-white py-2 px-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-center gap-2 text-sm">
+          <Shield className="h-4 w-4" />
+          <span>FDA Non-Device CDS | 21st Century Cures Act § 3060 | For Healthcare Professionals Only</span>
+        </div>
+      </div>
 
       {/* Main Content */}
       <main id="main-content" className="mx-auto max-w-7xl px-4 py-6 sm:py-8 sm:px-6 lg:px-8" role="main">
@@ -244,9 +259,22 @@ function HomeContent() {
                 </h2>
                 <p className="text-base text-gray-600 px-2">
                   Enter the clinical scenario to receive evidence-based
-                  recommendations aligned with ACR Appropriateness Criteria.
+                  recommendations from ARKA Imaging Intelligence Engine (AIIE).
                 </p>
               </section>
+              {/* Prominent FDA Non-Device CDS section */}
+              <div className="mb-6 rounded-lg border-2 border-teal-600 bg-gradient-to-r from-cyan-50 to-teal-50 p-4 text-center">
+                <p className="text-sm font-semibold text-teal-900">
+                  FDA Non-Device CDS | 21st Century Cures Act § 3060 Compliant | For HCP Use Only
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setShowFDAComplianceModal(true)}
+                  className="mt-2 text-sm font-medium text-teal-700 underline hover:text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-1 rounded"
+                >
+                  Learn more
+                </button>
+              </div>
               <DemoScenarioSelector onSelect={handleEvaluate} />
               <PatientInput onSubmit={handleEvaluate} isLoading={isLoading} />
             </div>
@@ -287,6 +315,13 @@ function HomeContent() {
                       navigator.clipboard.writeText(text);
                       // Could add toast notification here
                     }}
+                  />
+                )}
+                {result.shap && (
+                  <SHAPExplanation
+                    factors={result.shap.factors}
+                    baselineScore={result.shap.baselineScore}
+                    finalScore={result.shap.finalScore}
                   />
                 )}
                 {currentScenario && (
@@ -330,7 +365,30 @@ function HomeContent() {
                   />
                 )}
                 <EvidencePanel result={result} />
+                {/* How This Score Was Calculated - mini-explanation */}
+                <div className="bg-gray-50 border rounded-lg p-4">
+                  <h4 className="font-medium text-gray-900 flex items-center gap-2">
+                    <Lightbulb className="h-5 w-5 text-amber-500" />
+                    How This Score Was Calculated
+                  </h4>
+                  <p className="text-sm text-gray-600 mt-2">
+                    AIIE starts at baseline 5.0 and applies evidence-based factor weights from peer-reviewed 
+                    literature. Each factor&apos;s contribution is shown above. It&apos;s our proprietary methodology 
+                    using RAND/UCLA appropriateness methods.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setShowHowItWorks(true)}
+                    className="text-teal-600 text-sm mt-2 hover:underline"
+                  >
+                    Learn more about AIIE methodology →
+                  </button>
+                </div>
               </div>
+            </div>
+            {/* Results footer: methodology and version */}
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-4 print:mt-4">
+              <MethodologyBadge />
             </div>
           </div>
           )}
@@ -338,54 +396,36 @@ function HomeContent() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t bg-white mt-auto">
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <div className="space-y-4">
-            {/* Main Disclaimer */}
-            <div className="text-center">
-              <p className="text-base font-semibold text-gray-900 mb-2">
-                Decision Support Only - Not Medical Advice
-              </p>
-              <p className="text-sm text-gray-600 max-w-3xl mx-auto">
-                ARKA is a clinical decision support tool that provides recommendations based on ACR Appropriateness Criteria. 
-                These recommendations are intended to assist healthcare providers in making informed decisions about medical imaging. 
-                They do not constitute medical advice, diagnosis, or treatment recommendations. Healthcare providers must exercise 
-                their professional judgment and consider individual patient circumstances when making final imaging decisions.
-              </p>
-            </div>
-            
-            {/* Links and Version Info */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 border-t border-gray-200">
-              <ACRVersionBadge showTooltip={true} />
-              <a
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  // In production, this would link to full disclaimer page
-                  alert('Full disclaimer and terms of use would be displayed here.');
-                }}
-                className="text-sm text-blue-600 hover:text-blue-800 underline min-h-[44px] flex items-center px-2 py-1"
-              >
-                Full Disclaimer & Terms of Use
-              </a>
-              <span className="text-sm text-gray-500">
-                For Healthcare Professional Use Only
-              </span>
-            </div>
-            
-            {/* Copyright */}
-            <p className="text-center text-sm text-gray-500">
-              © {new Date().getFullYear()} ARKA Clinical Decision Support • Based on ACR Appropriateness Criteria
-            </p>
+      <footer className="bg-gray-50 border-t">
+        {/* Disclaimer */}
+        <div className="max-w-4xl mx-auto px-4 py-6 text-center">
+          <p className="font-semibold text-gray-900">Decision Support Only – Not Medical Advice</p>
+          <p className="text-sm text-gray-600 mt-2">
+            ARKA AIIE provides evidence-based imaging appropriateness recommendations using the RAND/UCLA 
+            methodology and peer-reviewed literature. These recommendations support clinical decision-making 
+            but do not constitute medical advice. Healthcare providers maintain full authority over imaging decisions.
+          </p>
+        </div>
+        {/* Version & FDA */}
+        <div className="border-t py-4 bg-gray-100">
+          <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-2 text-sm text-gray-600">
+            <span>AIIE v2.0 | RAND/UCLA + GRADE Methodology | Evidence: January 2026</span>
+            <span>FDA Non-Device CDS | 21st Century Cures Act § 3060</span>
+            <button type="button" onClick={() => setShowFDAComplianceModal(true)} className="text-teal-700 hover:underline">FDA Compliance & Full Disclaimer</button>
+          </div>
+        </div>
+        {/* Copyright */}
+        <div className="border-t py-3">
+          <div className="max-w-7xl mx-auto px-4 text-center text-xs text-gray-500">
+            © 2026 ARKA Health Technologies | For Healthcare Professional Use Only
           </div>
         </div>
       </footer>
 
-      {/* Integration Architecture Modal */}
-      <IntegrationArchitecture
-        isOpen={showIntegrationModal}
-        onClose={() => setShowIntegrationModal(false)}
-      />
+      {/* How AIIE Works (Methodology) Modal */}
+      {showHowItWorks && (
+        <HowItWorksModal onClose={() => setShowHowItWorks(false)} />
+      )}
         </div>
       )}
     </div>

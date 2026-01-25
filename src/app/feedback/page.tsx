@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { FDABanner } from '@/components/fda/FDABanner';
+import { FDAComplianceModal } from '@/components/fda/FDAComplianceModal';
 import { MessageSquare, CheckCircle, Star } from 'lucide-react';
 
 export default function FeedbackPage() {
@@ -11,6 +13,7 @@ export default function FeedbackPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showFDAComplianceModal, setShowFDAComplianceModal] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -44,41 +47,60 @@ export default function FeedbackPage() {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto">
-          <Card className="text-center">
-            <CardContent className="p-8 sm:p-12">
-              <div className="flex justify-center mb-6">
-                <div className="flex items-center justify-center w-20 h-20 rounded-full bg-green-100">
-                  <CheckCircle className="h-12 w-12 text-green-600" />
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <FDABanner onOpenComplianceModal={() => setShowFDAComplianceModal(true)} />
+        <div className="flex-1 py-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl mx-auto">
+            <Card className="text-center">
+              <CardContent className="p-8 sm:p-12">
+                <div className="flex justify-center mb-6">
+                  <div className="flex items-center justify-center w-20 h-20 rounded-full bg-green-100">
+                    <CheckCircle className="h-12 w-12 text-green-600" />
+                  </div>
                 </div>
-              </div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">
-                Thank You for Your Feedback!
-              </h1>
-              <p className="text-lg text-gray-700 mb-6">
-                We'll review your input and reach out within 48 hours if you indicated interest in a pilot.
-              </p>
-              <Button
-                onClick={() => router.push('/?returnToSplash=true')}
-                variant="primary"
-                size="lg"
-                className="min-h-[44px]"
-              >
-                Return to ARKA Demo
-              </Button>
-            </CardContent>
-          </Card>
+                <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                  Thank You for Your Feedback!
+                </h1>
+                <p className="text-lg text-gray-700 mb-6">
+                  We'll review your input and reach out within 48 hours if you indicated interest in a pilot.
+                </p>
+                <Button
+                  onClick={() => router.push('/?returnToSplash=true')}
+                  variant="primary"
+                  size="lg"
+                  className="min-h-[44px]"
+                >
+                  Return to ARKA Demo
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         </div>
+        <footer className="bg-gray-50 border-t">
+          <div className="max-w-4xl mx-auto px-4 py-6 text-center">
+            <p className="font-semibold text-gray-900">Decision Support Only – Not Medical Advice</p>
+            <p className="text-sm text-gray-600 mt-2">ARKA AIIE provides evidence-based imaging appropriateness recommendations. These do not constitute medical advice.</p>
+          </div>
+          <div className="border-t py-4 bg-gray-100">
+            <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-center gap-2 text-sm text-gray-600">
+              <span>AIIE v2.0 | FDA Non-Device CDS | 21st Century Cures Act § 3060</span>
+              <button type="button" onClick={() => setShowFDAComplianceModal(true)} className="text-teal-700 hover:underline">FDA Compliance & Full Disclaimer</button>
+            </div>
+          </div>
+          <div className="border-t py-3 text-center text-xs text-gray-500">© 2026 ARKA Health Technologies | For Healthcare Professional Use Only</div>
+        </footer>
+        <FDAComplianceModal isOpen={showFDAComplianceModal} onClose={() => setShowFDAComplianceModal(false)} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="mb-8 text-center">
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <FDABanner onOpenComplianceModal={() => setShowFDAComplianceModal(true)} />
+      <div className="flex-1 py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="mb-8 text-center">
           <div className="flex justify-center mb-4">
             <div className="flex items-center justify-center w-16 h-16 rounded-full bg-blue-100">
               <MessageSquare className="h-8 w-8 text-blue-600" />
@@ -423,8 +445,8 @@ export default function FeedbackPage() {
                       ))}
                     </div>
                     <p className="text-base text-gray-700 mb-2">
-                      "This would save us hours on inappropriate imaging orders. The ACR
-                      integration is exactly what we need."
+                      &quot;This would save us hours on inappropriate imaging orders. The AIIE
+                      integration is exactly what we need.&quot;
                     </p>
                     <p className="text-sm text-gray-500">
                       - Chief of Radiology, Academic Medical Center
@@ -472,7 +494,22 @@ export default function FeedbackPage() {
             </Card>
           </div>
         </div>
+        </div>
       </div>
+      <footer className="bg-gray-50 border-t">
+        <div className="max-w-4xl mx-auto px-4 py-6 text-center">
+          <p className="font-semibold text-gray-900">Decision Support Only – Not Medical Advice</p>
+          <p className="text-sm text-gray-600 mt-2">ARKA AIIE provides evidence-based imaging appropriateness recommendations. These do not constitute medical advice.</p>
+        </div>
+        <div className="border-t py-4 bg-gray-100">
+          <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-center gap-2 text-sm text-gray-600">
+            <span>AIIE v2.0 | FDA Non-Device CDS | 21st Century Cures Act § 3060</span>
+            <button type="button" onClick={() => setShowFDAComplianceModal(true)} className="text-teal-700 hover:underline">FDA Compliance & Full Disclaimer</button>
+          </div>
+        </div>
+        <div className="border-t py-3 text-center text-xs text-gray-500">© 2026 ARKA Health Technologies | For Healthcare Professional Use Only</div>
+      </footer>
+      <FDAComplianceModal isOpen={showFDAComplianceModal} onClose={() => setShowFDAComplianceModal(false)} />
     </div>
   );
 }

@@ -85,7 +85,7 @@ export function EvidencePanel({ result }: EvidencePanelProps) {
                 className="flex items-center gap-2 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm transition-all duration-200 min-h-[44px]"
               >
                 <span className="text-blue-600">
-                  {link.type === 'acr-guideline' && '📋'}
+                  {link.type === 'guideline' && '📋'}
                   {link.type === 'study' && '📄'}
                   {link.type === 'recommendation' && '✓'}
                 </span>
@@ -102,10 +102,8 @@ export function EvidencePanel({ result }: EvidencePanelProps) {
           {/* Transparency Notice */}
           <div className="mt-4 p-3 bg-gray-50 rounded-lg">
             <p className="text-sm text-gray-600">
-              <strong>Transparency Notice:</strong> This recommendation is based
-              on {matchedCriteria.source}. The ACR Appropriateness Criteria are
-              evidence-based guidelines developed by expert panels. You maintain
-              complete authority over clinical decisions.
+              <strong>Transparency Notice:</strong> AIIE uses RAND/UCLA methodology with peer-reviewed evidence. 
+              All scoring factors are transparent. You maintain complete authority over clinical decisions.
             </p>
           </div>
         </CardContent>

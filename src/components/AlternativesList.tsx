@@ -31,7 +31,7 @@ export function AlternativesList({
       </CardHeader>
       <CardContent className="p-4 sm:p-6">
         <p className="text-base text-gray-600 mb-4">
-          Based on ACR Appropriateness Criteria, consider these alternatives to{' '}
+          Based on AIIE evidence-based methodology, consider these alternatives to{' '}
           <strong>{currentProcedure}</strong>:
         </p>
         <div className="space-y-4">

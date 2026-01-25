@@ -267,31 +267,31 @@ export function getAllDemoScenarios(): {
   return [
     {
       key: 'lbp-inappropriate',
-      title: 'Low Back Pain - Inappropriate MRI',
+      title: 'Low Back Pain - Usually Not Appropriate',
       description:
-        '45yo male, 3 days of back pain, no red flags, MRI ordered → Should be conservative management',
+        '45yo male, 3 days of pain, no red flags → AIIE recommends conservative management',
     },
     {
       key: 'lbp-with-red-flags',
-      title: 'Low Back Pain - Appropriate with Red Flags',
+      title: 'Low Back Pain - Usually Appropriate',
       description:
         '62yo female, back pain + neuro deficit + cancer history → MRI appropriate',
     },
     {
       key: 'headache-inappropriate',
-      title: 'Chronic Headache - Inappropriate CT',
+      title: 'Chronic Headache - Usually Not Appropriate',
       description:
-        '35yo with stable 10-year migraine history → CT not indicated',
+        '35yo with stable 10-year migraine history → AIIE: CT not indicated',
     },
     {
       key: 'headache-thunderclap',
-      title: 'Thunderclap Headache - Appropriate Urgent CT',
+      title: 'Thunderclap Headache - Usually Appropriate',
       description:
         '52yo with sudden severe headache → CT STAT appropriate',
     },
     {
       key: 'appendicitis-pediatric',
-      title: 'Pediatric Appendicitis - Appropriate US',
+      title: 'Pediatric Appendicitis - Usually Appropriate',
       description:
         '12yo male with RLQ pain → Ultrasound first is appropriate',
     },
@@ -321,9 +321,9 @@ export function getAllDemoScenarios(): {
     },
     {
       key: 'lung-cancer-screening',
-      title: 'Lung Cancer Screening - Appropriate',
+      title: 'Lung Cancer Screening - Usually Appropriate',
       description:
-        '45yo smoker, 30 pack-years, screening CT → Score 9, appropriate per USPSTF guidelines',
+        '45yo smoker, 30 pack-years, screening CT → AIIE: appropriate per USPSTF guidelines',
     },
   ];
 }

@@ -90,14 +90,14 @@ export interface PriorImaging {
  * The OUTPUT of our evaluation
  */
 export interface EvaluationResult {
-  // Overall appropriateness (1-9 scale per ACR)
+  // Overall appropriateness (1-9 scale)
   appropriatenessScore: AppropriatenessScore;
   
   // Traffic light for quick visualization
   trafficLight: 'green' | 'yellow' | 'red';
   
-  // The matched ACR criteria
-  matchedCriteria: ACRCriteria;
+  // Matched imaging criteria / AIIE evidence basis
+  matchedCriteria: ImagingCriteria;
   
   // Why we gave this score
   reasoning: string[];
@@ -119,10 +119,17 @@ export interface EvaluationResult {
   
   // Timestamp
   evaluatedAt: string;
+
+  // Optional SHAP-style explanation (AIIE transparent scoring)
+  shap?: {
+    factors: { name: string; value: string; contribution: number; direction: 'supports' | 'opposes' | 'neutral'; explanation: string; evidenceCitation: string }[];
+    baselineScore: number;
+    finalScore: number;
+  };
 }
 
 /**
- * ACR uses 1-9 scale:
+ * 1-9 scale:
  * 1-3: Usually NOT appropriate
  * 4-6: May be appropriate
  * 7-9: Usually appropriate
@@ -134,27 +141,27 @@ export interface AppropriatenessScore {
 }
 
 /**
- * ACR Appropriateness Criteria that was matched
+ * Imaging criteria / AIIE evidence basis for a recommendation
  */
-export interface ACRCriteria {
+export interface ImagingCriteria {
   id: string;
-  topic: string; // e.g., "Low Back Pain"
-  variant: string; // e.g., "Uncomplicated, no red flags"
-  procedure: string; // The imaging procedure
-  rating: number; // ACR's rating 1-9
+  topic: string;
+  variant: string;
+  procedure: string;
+  rating: number; // 1-9
   rrl: string; // Relative Radiation Level
-  source: string; // Citation
+  source: string;
   lastReviewed: string;
 }
 
 /**
- * Match result with quality information
+ * Match result with quality information (used by evaluation layer)
  */
 export interface MatchResult {
-  criteria: ACRCriteria | null;
+  criteria: ImagingCriteria | null;
   matchQuality: 'exact' | 'similar' | 'general' | 'none';
-  similarityScore?: number; // 0-1, higher is more similar
-  closestMatch?: ACRCriteria; // Closest matching criteria if no exact match
+  similarityScore?: number;
+  closestMatch?: ImagingCriteria;
 }
 
 /**
@@ -183,7 +190,7 @@ export interface Warning {
 export interface EvidenceLink {
   title: string;
   url: string;
-  type: 'acr-guideline' | 'study' | 'recommendation';
+  type: 'guideline' | 'study' | 'recommendation';
 }
 
 // ============================================================================
