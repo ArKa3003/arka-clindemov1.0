@@ -75,26 +75,74 @@ export function normalizeChiefComplaint(complaint: string): string | null {
   return null;
 }
 
-/**
- * Validate age
- */
-export function validateAge(age: number): ValidationError[] {
+/** Returns true if string is empty or only whitespace (after trim). */
+export function isEmptyOrWhitespace(value: string): boolean {
+  return typeof value !== 'string' || value.trim().length === 0;
+}
+
+/** Error message for empty/whitespace-only required fields. */
+export const EMPTY_FIELD_MESSAGE = 'This field cannot be empty';
+
+/** Validate required text: must be non-empty after trim. Rejects whitespace-only. */
+export function validateRequiredText(
+  value: string,
+  fieldName: string
+): ValidationError | null {
+  if (isEmptyOrWhitespace(value)) {
+    return { field: fieldName, message: EMPTY_FIELD_MESSAGE, severity: 'error' };
+  }
+  return null;
+}
+
+/** Validate text max length. */
+export function validateTextMaxLength(
+  value: string,
+  fieldName: string,
+  maxLength: number
+): ValidationError | null {
+  const trimmed = (value || '').trim();
+  if (trimmed.length > maxLength) {
+    return {
+      field: fieldName,
+      message: `Must be ${maxLength} characters or fewer (currently ${trimmed.length})`,
+      severity: 'error',
+    };
+  }
+  return null;
+}
+
+/** Validate age: required, numeric, integer (no decimals), 0–120. */
+export function validateAge(age: unknown): ValidationError[] {
   const errors: ValidationError[] = [];
-  
-  if (age < 0 || age > 120) {
+  const num = typeof age === 'number' ? age : Number(age);
+  if (age === '' || age === null || age === undefined || Number.isNaN(num)) {
+    errors.push({
+      field: 'age',
+      message: 'Age is required',
+      severity: 'error',
+    });
+    return errors;
+  }
+  if (!Number.isInteger(num) || num !== Math.floor(num)) {
+    errors.push({
+      field: 'age',
+      message: 'Age must be a whole number (no decimals)',
+      severity: 'error',
+    });
+  }
+  if (num < 0 || num > 120) {
     errors.push({
       field: 'age',
       message: 'Age must be between 0 and 120 years',
       severity: 'error',
     });
-  } else if (age > 100) {
+  } else if (num > 100) {
     errors.push({
       field: 'age',
       message: 'Age exceeds 100 years. Please verify this is correct.',
       severity: 'warning',
     });
   }
-  
   return errors;
 }
 

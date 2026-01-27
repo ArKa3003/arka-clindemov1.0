@@ -12,8 +12,9 @@ export function Card({ children, className, variant = 'default' }: CardProps) {
   return (
     <div
       className={clsx(
-        'rounded-lg bg-white transition-all duration-200',
+        'rounded-lg bg-white transition-all duration-150 ease-out',
         'p-4 sm:p-6',
+        'hover:shadow-md hover:-translate-y-0.5',
         variant === 'bordered' && 'border border-gray-200',
         variant === 'elevated' && 'shadow-lg',
         variant === 'default' && 'shadow-md',

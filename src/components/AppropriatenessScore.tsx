@@ -94,23 +94,23 @@ export function AppropriatenessScore({ result, scenario, onCopyJustification }: 
         {/* MIDDLE SECTION: AIIE Evidence Basis + Key Clinical Factors */}
         <div className="space-y-4">
           {/* AIIE Evidence Basis */}
-          <div className="rounded-lg bg-blue-50 border border-blue-200 p-4">
+          <div className="rounded-lg bg-white border border-gray-200 p-4">
             <h3 className="font-semibold text-gray-900 mb-2">AIIE Evidence Basis</h3>
             {coverageStatus !== 'INSUFFICIENT_DATA' ? (
               <>
-                <p className="text-base text-gray-700 mb-2">
-                  <strong>Topic:</strong> {matchedCriteria.topic}
+                <p className="text-base text-gray-800 mb-2">
+                  <strong className="text-gray-900">Topic:</strong> {matchedCriteria.topic}
                   {matchedCriteria.variant && ` - ${matchedCriteria.variant}`}
                 </p>
-                <p className="text-base text-gray-700 mb-2">
-                  <strong>Based on:</strong> {matchedCriteria.source}
+                <p className="text-base text-gray-800 mb-2">
+                  <strong className="text-gray-900">Based on:</strong> {matchedCriteria.source}
                   {matchedCriteria.lastReviewed && matchedCriteria.lastReviewed !== 'N/A' && (
                     <span className="text-gray-600">
                       {' '}(Evidence: {matchedCriteria.lastReviewed})
                     </span>
                   )}
                 </p>
-                <Link href="/methodology" className="inline-flex items-center gap-2 text-base font-medium text-blue-600 hover:text-blue-800 hover:underline">
+                <Link href="/how-it-works" className="inline-flex items-center gap-2 text-base font-medium text-teal-600 hover:text-teal-700 hover:underline">
                   <span>View AIIE Methodology</span>
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -126,11 +126,11 @@ export function AppropriatenessScore({ result, scenario, onCopyJustification }: 
 
           {/* Key Clinical Factors */}
           {keyFactors.length > 0 && (
-            <div className="rounded-lg bg-gray-50 border border-gray-200 p-4">
+            <div className="rounded-lg bg-white border border-gray-200 p-4">
               <h3 className="font-semibold text-gray-900 mb-3">Key Clinical Factors</h3>
               <ul className="space-y-2">
                 {keyFactors.map((factor, index) => (
-                  <li key={index} className="flex items-start gap-2 text-base text-gray-700">
+                  <li key={index} className="flex items-start gap-2 text-base text-gray-800">
                     <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-500" />
                     {factor}
                   </li>

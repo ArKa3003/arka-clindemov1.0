@@ -10,7 +10,7 @@ export function SplashScreen({ onContinue }: SplashScreenProps) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Fade in on mount
+    document.title = 'Welcome | ARKA';
     setIsVisible(true);
 
     // Handle keyboard events
@@ -38,7 +38,7 @@ export function SplashScreen({ onContinue }: SplashScreenProps) {
       onClick={handleClick}
       role="button"
       tabIndex={0}
-      aria-label="Splash screen - Click anywhere or press Enter to continue"
+      aria-label="Welcome - Click anywhere or press Enter to continue"
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();

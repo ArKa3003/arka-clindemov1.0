@@ -25,7 +25,7 @@ export function PatientSafetySidebar({
       {safetyAlerts.length > 0 && (
         <Card variant="bordered" className="transition-all duration-200 animate-in fade-in">
           <CardHeader>
-            <CardTitle className="text-xl">Patient Safety Alerts</CardTitle>
+            <CardTitle className="text-xl text-gray-900">Patient Safety Alerts</CardTitle>
           </CardHeader>
           <CardContent className="p-4 sm:p-6">
             <div className="space-y-3">
@@ -35,9 +35,9 @@ export function PatientSafetySidebar({
                   className={clsx(
                     'p-3 rounded-lg border transition-all duration-200',
                     alert.severity === 'critical'
-                      ? 'bg-red-50 border-red-200'
+                      ? 'bg-red-50 border-red-300'
                       : alert.severity === 'warning'
-                        ? 'bg-yellow-50 border-yellow-200'
+                        ? 'bg-amber-50 border-amber-300'
                         : 'bg-blue-50 border-blue-200'
                   )}
                   role={alert.severity === 'critical' ? 'alert' : 'status'}
@@ -57,7 +57,18 @@ export function PatientSafetySidebar({
                     >
                       {alert.type}
                     </Badge>
-                    <p className="text-base text-gray-700 flex-1">{alert.message}</p>
+                    <p
+                      className={clsx(
+                        'text-base flex-1 font-medium',
+                        alert.severity === 'critical'
+                          ? 'text-red-800'
+                          : alert.severity === 'warning'
+                            ? 'text-amber-900'
+                            : 'text-gray-800'
+                      )}
+                    >
+                      {alert.message}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -68,9 +79,9 @@ export function PatientSafetySidebar({
 
       {/* Prior Imaging Summary */}
       {hasPriorImaging && (
-        <Card variant="bordered" className="transition-all duration-200 animate-in fade-in">
+        <Card variant="bordered" className="transition-all duration-200 animate-in fade-in bg-white">
           <CardHeader>
-            <CardTitle className="text-xl">Prior Imaging Summary</CardTitle>
+            <CardTitle className="text-xl text-gray-900">Prior Imaging Summary</CardTitle>
           </CardHeader>
           <CardContent className="p-4 sm:p-6">
             <div className="space-y-3">
@@ -111,9 +122,9 @@ export function PatientSafetySidebar({
         scenario.contrastAllergy ||
         scenario.renalFunction ||
         scenario.medications) && (
-        <Card variant="bordered" className="transition-all duration-200 animate-in fade-in">
+        <Card variant="bordered" className="transition-all duration-200 animate-in fade-in bg-white">
           <CardHeader>
-            <CardTitle className="text-xl">Patient Safety Factors</CardTitle>
+            <CardTitle className="text-xl text-gray-900">Patient Safety Factors</CardTitle>
           </CardHeader>
           <CardContent className="p-4 sm:p-6">
             <div className="space-y-3 text-base">
@@ -194,9 +205,9 @@ export function PatientSafetySidebar({
       )}
 
       {/* Patient Demographics Summary */}
-      <Card variant="bordered" className="transition-all duration-200 animate-in fade-in">
+      <Card variant="bordered" className="transition-all duration-200 animate-in fade-in bg-white">
         <CardHeader>
-          <CardTitle className="text-xl">Patient Summary</CardTitle>
+          <CardTitle className="text-xl text-gray-900">Patient Summary</CardTitle>
         </CardHeader>
         <CardContent className="p-4 sm:p-6">
           <div className="space-y-2 text-base">

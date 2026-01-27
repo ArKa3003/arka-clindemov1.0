@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { FDA_COMPLIANCE, PROPRIETARY_FRAMEWORK } from '@/lib/constants/fda-compliance';
 import { FDABanner } from '@/components/fda/FDABanner';
 import { FDAComplianceModal } from '@/components/fda/FDAComplianceModal';
+import { AppHeader } from '@/components/AppHeader';
+import { AppFooter } from '@/components/AppFooter';
 
 export default function MethodologyPage() {
   const [showFDAComplianceModal, setShowFDAComplianceModal] = useState(false);
@@ -12,23 +13,9 @@ export default function MethodologyPage() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <FDABanner onOpenComplianceModal={() => setShowFDAComplianceModal(true)} />
-      <header className="border-b bg-white shrink-0">
-        <div className="mx-auto max-w-3xl px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="text-sm font-medium text-teal-700 hover:text-teal-800 underline"
-            >
-              ← Back to AIIE
-            </Link>
-            <span className="rounded-full bg-teal-100 px-2.5 py-0.5 text-xs font-semibold text-teal-800">
-              Non-Device CDS
-            </span>
-          </div>
-        </div>
-      </header>
+      <AppHeader />
 
-      <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
+      <main className="mx-auto max-w-3xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
         <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
           Methodology: {PROPRIETARY_FRAMEWORK.name}
         </h1>
@@ -88,19 +75,7 @@ export default function MethodologyPage() {
           </section>
         </div>
       </main>
-      <footer className="bg-gray-50 border-t mt-auto">
-        <div className="max-w-4xl mx-auto px-4 py-6 text-center">
-          <p className="font-semibold text-gray-900">Decision Support Only – Not Medical Advice</p>
-          <p className="text-sm text-gray-600 mt-2">AIIE uses RAND/UCLA methodology and peer-reviewed evidence. These do not constitute medical advice.</p>
-        </div>
-        <div className="border-t py-4 bg-gray-100">
-          <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-center gap-2 text-sm text-gray-600">
-            <span>AIIE v2.0 | FDA Non-Device CDS | 21st Century Cures Act § 3060</span>
-            <button type="button" onClick={() => setShowFDAComplianceModal(true)} className="text-teal-700 hover:underline">FDA Compliance & Full Disclaimer</button>
-          </div>
-        </div>
-        <div className="border-t py-3 text-center text-xs text-gray-500">© 2026 ARKA Health Technologies | For Healthcare Professional Use Only</div>
-      </footer>
+      <AppFooter onOpenFDAComplianceModal={() => setShowFDAComplianceModal(true)} />
       <FDAComplianceModal isOpen={showFDAComplianceModal} onClose={() => setShowFDAComplianceModal(false)} />
     </div>
   );

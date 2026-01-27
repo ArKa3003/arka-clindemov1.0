@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Class-based dark mode for header toggle (add .dark to html) */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -23,8 +26,25 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 16px; /* Base font size for clinical usability */
+  font-size: 16px; /* Base font size for clinical usability; WCAG AA minimum for body text */
   line-height: 1.5;
+}
+
+/* Skip-to-main lands below sticky header (~56px) */
+#main-content {
+  scroll-margin-top: 3.5rem;
+}
+
+/* FDA/compliance banner text: wrap + responsive font on mobile */
+.fda-banner-text {
+  font-size: clamp(11px, 3vw, 14px);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Results page: minimum 14px text for readability on mobile */
+.results-min-text {
+  font-size: max(14px, 1rem);
 }
 
 /* Font size classes for accessibility toggle */
@@ -63,6 +83,44 @@ body {
 
 .font-size-extra-large * {
   font-size: inherit;
+}
+
+/*
+ * Breakpoint strategy:
+ * - Mobile: < 640px  (default, use sm: for overrides)
+ * - Tablet: 640px - 1024px  (sm: and lg:)
+ * - Desktop: > 1024px  (lg:)
+ * Tailwind: sm = 640px, md = 768px, lg = 1024px
+ */
+
+/* Touch targets: WCAG 2.5.5 — minimum 44x44px for pointer inputs */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Form validation: error color, borders, and accessibility */
+:root {
+  --form-error: #dc2626;
+  --form-error-bg: rgba(220, 38, 38, 0.06);
+}
+.form-field-error {
+  color: var(--form-error);
+  font-size: 13px;
+}
+.input-error {
+  border-color: var(--form-error) !important;
+  background-color: var(--form-error-bg);
+  outline: none;
+}
+.input-error:focus {
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.25);
+}
+.input-success {
+  border-color: #16a34a;
+}
+.input-success:focus {
+  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.25);
 }
 
 /* Mobile optimizations */
@@ -156,6 +214,29 @@ textarea::placeholder {
 .clip-octagon {
   clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
   -webkit-clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+}
+
+/* Appropriateness badge text – responsive sizing (Option C) */
+.badge-label-circle {
+  font-size: clamp(10px, 2.5vw, 14px);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0 10px;
+}
+.badge-label-octagon {
+  font-size: clamp(8px, 2vw, 12px);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  padding: 0 8px;
+}
+.badge-label-triangle {
+  font-size: clamp(8px, 1.8vw, 11px);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0 8px;
 }
 
 /* Striped pattern for yellow indicator (colorblind accessibility) */
@@ -326,11 +407,19 @@ html.high-contrast .shadow-lg {
   transition-duration: 200ms;
 }
 
-/* Fade-in animation for results */
+/* Page transitions: subtle fade 200-300ms */
+.animate-in {
+  animation: fadeIn 0.25s ease-out;
+}
+
+.fade-in {
+  animation: fadeIn 0.25s ease-out;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -338,21 +427,23 @@ html.high-contrast .shadow-lg {
   }
 }
 
-.animate-in {
-  animation: fadeIn 0.3s ease-out;
+/* Card hover: subtle lift (translateY + shadow), 150ms ease */
+.card-hover {
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
-.fade-in {
-  animation: fadeIn 0.3s ease-out;
+/* Button press: scale(0.98) briefly */
+button:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
-/* Smooth hover transitions */
-button, a, .hover-transition {
-  transition: all 0.2s ease-in-out;
-}
-
-button:hover, a:hover {
-  transition: all 0.2s ease-in-out;
+/* Links: underline or color change on hover */
+a:hover {
+  text-decoration-thickness: 1.5px;
 }
 
 /* Splash Screen Animations */

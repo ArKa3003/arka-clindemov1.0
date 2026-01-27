@@ -17,9 +17,9 @@ export function EvidencePanel({ result }: EvidencePanelProps) {
     <div className="space-y-4 sm:space-y-6">
       {/* Warnings */}
       {warnings.length > 0 && (
-        <Card variant="bordered" className="transition-all duration-200 animate-in fade-in">
+        <Card variant="bordered" className="transition-all duration-200 animate-in fade-in bg-white">
           <CardHeader>
-            <CardTitle>Alerts & Warnings</CardTitle>
+            <CardTitle className="text-gray-900">Alerts & Warnings</CardTitle>
           </CardHeader>
           <CardContent className="p-4 sm:p-6">
             <div className="space-y-3">
@@ -29,9 +29,9 @@ export function EvidencePanel({ result }: EvidencePanelProps) {
                   className={clsx(
                     'p-3 rounded-lg border transition-all duration-200',
                     warning.severity === 'critical'
-                      ? 'bg-red-50 border-red-200'
+                      ? 'bg-red-50 border-red-300'
                       : warning.severity === 'warning'
-                        ? 'bg-yellow-50 border-yellow-200'
+                        ? 'bg-amber-50 border-amber-300'
                         : 'bg-blue-50 border-blue-200'
                   )}
                   role={warning.severity === 'critical' ? 'alert' : 'status'}
@@ -51,7 +51,18 @@ export function EvidencePanel({ result }: EvidencePanelProps) {
                     >
                       {warning.type.replace('-', ' ')}
                     </Badge>
-                    <p className="text-base text-gray-700">{warning.message}</p>
+                    <p
+                      className={clsx(
+                        'text-base flex-1 font-medium',
+                        warning.severity === 'critical'
+                          ? 'text-red-800'
+                          : warning.severity === 'warning'
+                            ? 'text-amber-900'
+                            : 'text-gray-800'
+                      )}
+                    >
+                      {warning.message}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -61,17 +72,17 @@ export function EvidencePanel({ result }: EvidencePanelProps) {
       )}
 
       {/* Evidence Links - CRITICAL FOR NON-DEVICE CDS */}
-      <Card variant="bordered" className="transition-all duration-200 animate-in fade-in">
+      <Card variant="bordered" className="transition-all duration-200 animate-in fade-in bg-white">
         <CardHeader>
-          <CardTitle>
+          <CardTitle className="text-gray-900">
             Evidence & Guidelines
-            <span className="ml-2 text-sm font-normal text-gray-500">
+            <span className="ml-2 text-sm font-normal text-gray-600">
               (Independent review source)
             </span>
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4 sm:p-6">
-          <p className="text-base text-gray-600 mb-4">
+          <p className="text-base text-gray-700 mb-4">
             The following resources support this recommendation and allow you to
             independently verify the clinical basis:
           </p>
@@ -84,25 +95,25 @@ export function EvidencePanel({ result }: EvidencePanelProps) {
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm transition-all duration-200 min-h-[44px]"
               >
-                <span className="text-blue-600">
+                <span className="text-teal-600">
                   {link.type === 'guideline' && '📋'}
                   {link.type === 'study' && '📄'}
                   {link.type === 'recommendation' && '✓'}
                 </span>
                 <div className="flex-1">
-                  <p className="text-base font-medium text-blue-600 hover:underline">
+                  <p className="text-base font-medium text-teal-600 hover:text-teal-700 hover:underline">
                     {link.title}
                   </p>
-                  <p className="text-sm text-gray-500">{link.url}</p>
+                  <p className="text-sm text-gray-600">{link.url}</p>
                 </div>
-                <span className="text-gray-400">→</span>
+                <span className="text-gray-500">→</span>
               </a>
             ))}
           </div>
           {/* Transparency Notice */}
           <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-            <p className="text-sm text-gray-600">
-              <strong>Transparency Notice:</strong> AIIE uses RAND/UCLA methodology with peer-reviewed evidence. 
+            <p className="text-base text-gray-700">
+              <strong className="text-gray-900">Transparency Notice:</strong> AIIE uses RAND/UCLA methodology with peer-reviewed evidence. 
               All scoring factors are transparent. You maintain complete authority over clinical decisions.
             </p>
           </div>

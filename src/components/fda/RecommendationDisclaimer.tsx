@@ -3,7 +3,7 @@
 export function RecommendationDisclaimer() {
   return (
     <p
-      className="mt-3 text-[12px] leading-snug text-gray-500 print:text-[11px] print:text-gray-700"
+      className="mt-3 text-base leading-snug text-gray-700 print:text-sm print:text-gray-800"
       role="note"
     >
       This guidance supports clinical decision-making. It does not constitute medical advice or

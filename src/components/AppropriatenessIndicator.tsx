@@ -85,13 +85,22 @@ export function AppropriatenessIndicator({
     octagon: 'clip-octagon',
   };
 
+  // Minimum sizes: circle 120–150px, octagon 130–160px, triangle matches
+  const sizeClasses = {
+    circle: 'min-h-[120px] min-w-[120px] h-[130px] w-[130px] sm:h-[140px] sm:w-[140px] md:h-[150px] md:w-[150px]',
+    octagon: 'min-h-[130px] min-w-[130px] h-[140px] w-[140px] sm:h-[150px] sm:w-[150px] md:h-[160px] md:w-[160px]',
+    triangle: 'min-h-[120px] min-w-[120px] h-[130px] w-[130px] sm:h-[140px] sm:w-[140px] md:h-[150px] md:w-[150px]',
+  };
+  const shapeKey = currentConfig.shape as keyof typeof shapeClasses;
+
   return (
     <div className="flex flex-col items-center gap-3 sm:gap-4">
-      {/* Large Traffic Light Indicator - Responsive sizing with distinct shapes */}
+      {/* Large Traffic Light Indicator – min 120–150px circle, 130–160px octagon, 8–10px padding */}
       <div
         className={clsx(
-          'relative flex h-24 w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 items-center justify-center border-4 shadow-2xl transition-all',
-          shapeClasses[currentConfig.shape as keyof typeof shapeClasses],
+          'relative flex flex-col items-center justify-center border-4 shadow-2xl transition-all p-[10px] box-border',
+          sizeClasses[shapeKey],
+          shapeClasses[shapeKey],
           currentConfig.bgColor,
           currentConfig.borderColor,
           currentConfig.shadowColor,
@@ -100,35 +109,44 @@ export function AppropriatenessIndicator({
         )}
         role="status"
         aria-label={currentConfig.ariaLabel}
+        style={{ minHeight: '44px', minWidth: '44px' }}
       >
-        {/* Large Central Icon - Always visible for colorblind users */}
-        <div className="absolute inset-0 flex items-center justify-center z-10">
+        {/* Central content: icon + label, flex column, centered */}
+        <div className="flex flex-1 flex-col items-center justify-center gap-0.5 min-w-0 w-full px-1 py-0 z-10">
+          {/* Large Central Icon – scaled to leave room for text */}
           <span
             className={clsx(
-              'text-4xl sm:text-5xl md:text-6xl font-bold drop-shadow-lg',
+              'flex-shrink-0 text-3xl sm:text-4xl md:text-5xl font-bold drop-shadow-lg leading-none',
               currentConfig.textColor
             )}
             aria-hidden="true"
           >
             {currentConfig.icon}
           </span>
-        </div>
-
-        {/* Text Label Inside - Centered, below icon */}
-        <div className="absolute bottom-2 left-0 right-0 px-2 text-center z-10">
-          <p
+          {/* Text label – responsive, centered, uppercase; octagon uses two lines */}
+          <div
             className={clsx(
-              'text-[10px] sm:text-[11px] md:text-[12px] lg:text-[14px] font-extrabold uppercase leading-tight tracking-wider',
+              'flex flex-col items-center justify-center text-center min-h-0',
+              currentConfig.shape === 'circle' && 'badge-label-circle',
+              currentConfig.shape === 'octagon' && 'badge-label-octagon',
+              currentConfig.shape === 'triangle' && 'badge-label-triangle',
               currentConfig.textColor,
               'drop-shadow-md'
             )}
           >
-            {currentConfig.label}
-          </p>
+            {currentConfig.shape === 'octagon' ? (
+              <>
+                <span className="block leading-tight">NOT</span>
+                <span className="block leading-tight">APPROPRIATE</span>
+              </>
+            ) : (
+              <span className="block leading-tight">{currentConfig.label}</span>
+            )}
+          </div>
         </div>
 
         {/* Shape indicator badge - Top right corner */}
-        <div className="absolute top-1 right-1 sm:top-2 sm:right-2 z-10">
+        <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 z-20">
           <span
             className={clsx(
               'flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded border-2 font-bold text-xs sm:text-sm',
@@ -146,16 +164,19 @@ export function AppropriatenessIndicator({
         </div>
       </div>
 
-      {/* Score Display Below */}
+      {/* Score Display Below – 18–24px, clearly visible */}
       {score > 0 ? (
         <div className="text-center">
-          <div className="text-2xl sm:text-3xl font-bold text-gray-900">{score}</div>
-          <div className="text-xs sm:text-sm text-gray-600">/9</div>
+          <div className="text-xl sm:text-2xl font-bold text-gray-900" style={{ fontSize: 'clamp(18px, 4vw, 24px)' }}>
+            {score} <span className="text-gray-600 font-semibold">/9</span>
+          </div>
         </div>
       ) : (
         <div className="text-center">
-          <div className="text-xl sm:text-2xl font-bold text-gray-500">N/A</div>
-          <div className="text-xs text-gray-500">Insufficient Data</div>
+          <div className="text-lg sm:text-xl font-bold text-gray-500" style={{ fontSize: 'clamp(18px, 4vw, 24px)' }}>
+            N/A
+          </div>
+          <div className="text-xs text-gray-500 mt-0.5">Insufficient Data</div>
         </div>
       )}
     </div>
