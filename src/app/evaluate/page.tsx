@@ -161,14 +161,14 @@ export default function EvaluatePage() {
                   Enter the clinical scenario to receive evidence-based recommendations from ARKA Imaging Intelligence Engine (AIIE).
                 </p>
               </section>
-              <div className="mb-6 rounded-lg border-2 border-teal-700 bg-gradient-to-r from-cyan-50 to-teal-50 p-4 text-center">
-                <p className="text-sm font-semibold text-teal-950">
+              <div className="mb-6 rounded-lg border-2 border-teal-700 dark:border-gray-600 bg-gradient-to-r from-cyan-50 to-teal-50 dark:from-gray-800 dark:to-gray-900 p-4 text-center">
+                <p className="text-sm font-semibold text-teal-950 dark:text-gray-200">
                   FDA Non-Device CDS | 21st Century Cures Act § 3060 Compliant | For HCP Use Only
                 </p>
                 <button
                   type="button"
                   onClick={() => setShowFDAComplianceModal(true)}
-                  className="mt-2 min-h-[44px] min-w-[44px] px-3 py-2 text-sm font-medium text-teal-800 underline hover:text-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-1 rounded touch-manipulation"
+                  className="mt-2 min-h-[44px] min-w-[44px] px-3 py-2 text-sm font-medium text-teal-800 dark:text-teal-300 underline hover:text-teal-900 dark:hover:text-teal-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-1 dark:focus:ring-offset-gray-800 rounded touch-manipulation"
                 >
                   Learn more
                 </button>

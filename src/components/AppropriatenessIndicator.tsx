@@ -49,7 +49,7 @@ export function AppropriatenessIndicator({
       borderColor: highContrast ? 'border-cyan-800' : 'border-teal-700',
       shadowColor: highContrast ? 'shadow-cyan-600/70' : 'shadow-teal-500/50',
       icon: '✓',
-      textColor: 'text-white',
+      textColor: 'text-green-100',
       shape: 'circle', // Circle for appropriate
       ariaLabel: 'Appropriate - Circle shape with checkmark icon',
     },
@@ -70,7 +70,7 @@ export function AppropriatenessIndicator({
       borderColor: highContrast ? 'border-red-900' : 'border-red-800',
       shadowColor: highContrast ? 'shadow-red-700/70' : 'shadow-red-600/50',
       icon: '✗',
-      textColor: 'text-white',
+      textColor: 'text-red-100',
       shape: 'octagon', // Octagon (stop sign) for not appropriate
       ariaLabel: 'Not appropriate - Octagon shape with X icon',
     },

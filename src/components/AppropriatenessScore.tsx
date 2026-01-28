@@ -78,7 +78,15 @@ export function AppropriatenessScore({ result, scenario, onCopyJustification }: 
           
           {/* One-Line Recommendation */}
           <div className="flex-1 text-center w-full">
-            <h2 id="appropriateness-result-title" className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2 px-2">
+            <h2
+              id="appropriateness-result-title"
+              className={clsx(
+                'text-2xl sm:text-3xl md:text-4xl font-bold mb-2 px-2',
+                trafficLight === 'green' && 'text-green-700 dark:text-green-400',
+                trafficLight === 'red' && 'text-red-700 dark:text-red-400',
+                trafficLight === 'yellow' && 'text-gray-900 dark:text-gray-100'
+              )}
+            >
               {oneLineRecommendation}
             </h2>
             <div className="flex flex-wrap items-center justify-center gap-2 mt-3">
