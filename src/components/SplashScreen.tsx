@@ -61,14 +61,21 @@ export function SplashScreen({ onContinue }: SplashScreenProps) {
       </div>
 
       {/* Logo with floating animation */}
-      <div className="relative z-10 flex items-center justify-center splash-float px-4 py-8 sm:py-12">
+      <div className="relative z-10 flex flex-col items-center justify-center splash-float px-4 py-8 sm:py-12 gap-4">
         <img
           src="/arka-logo.svg"
           alt="ARKA Logo"
-          className="w-[400px] h-[450px] sm:w-[500px] sm:h-[562px] md:w-[600px] md:h-[675px] object-contain max-w-[90vw] max-h-[70vh]"
+          className="w-[400px] h-[450px] sm:w-[500px] sm:h-[562px] md:w-[600px] md:h-[675px] object-contain max-w-[90vw] max-h-[60vh]"
           width="600"
           height="675"
         />
+        {/* Tagline so ARKA is always clearly visible */}
+        <p
+          className="text-center italic text-[#5B9BD5] text-xl sm:text-2xl md:text-3xl font-serif"
+          aria-hidden="true"
+        >
+          rem<span className="text-[#00D9FF] font-bold underline decoration-[#00D9FF] decoration-2 underline-offset-2">ARKA</span>bly precise
+        </p>
       </div>
 
       {/* Continue text with pulse animation */}
