@@ -78,7 +78,7 @@ export function AppropriatenessScore({ result, scenario, onCopyJustification }: 
           
           {/* One-Line Recommendation */}
           <div className="flex-1 text-center w-full">
-            <h2 id="appropriateness-result-title" className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2 px-2">
+            <h2 id="appropriateness-result-title" className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2 px-2">
               {oneLineRecommendation}
             </h2>
             <div className="flex flex-wrap items-center justify-center gap-2 mt-3">
@@ -306,7 +306,7 @@ function CoverageStatusBadge({
   const statusConfig = {
     DIRECT_MATCH: {
       label: 'Direct Match',
-      className: 'bg-teal-100 text-teal-800 border-teal-300',
+      className: 'bg-teal-100 text-teal-900 border-teal-400',
       icon: '✓',
     },
     SIMILAR_MATCH: {
@@ -352,7 +352,7 @@ function ConfidenceLevelBadge({
   const levelConfig = {
     High: {
       label: 'High Confidence',
-      className: 'bg-teal-100 text-teal-800 border-teal-300',
+      className: 'bg-teal-100 text-teal-900 border-teal-400',
       icon: '✓',
     },
     Medium: {

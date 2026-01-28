@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, Sun, Moon, Menu, X, Plus } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
+import { FontSizeToggle } from '@/components/FontSizeToggle';
 
 interface AppHeaderProps {
   /** Show "New Evaluation" button (e.g. on results view). Routes to /evaluate and clears result. */
@@ -134,7 +135,8 @@ export function AppHeader({
               </button>
             )}
           </nav>
-          <div className="flex shrink-0 items-center gap-3 pl-2 border-l border-gray-200 dark:border-gray-600">
+          <div className="flex shrink-0 items-center gap-3 pl-2 border-l border-gray-200 dark:border-gray-600 pr-1">
+            <FontSizeToggle variant="inline" />
             <button
               type="button"
               onClick={toggleTheme}
@@ -144,17 +146,11 @@ export function AppHeader({
             >
               {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </button>
-            <div
-              className={`flex shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-sm font-semibold text-gray-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 ${TOUCH_TARGET}`}
-              aria-hidden="true"
-            >
-              A
-            </div>
           </div>
         </div>
 
-        {/* Mobile (<768px): Hamburger + Avatar only in header row */}
-        <div className="flex md:hidden shrink-0 items-center gap-1">
+        {/* Mobile (<768px): Hamburger + Text size + ensure right padding so controls aren't clipped */}
+        <div className="flex md:hidden shrink-0 items-center gap-1 pr-2 min-w-0">
           <button
             type="button"
             onClick={() => setMenuOpen((o) => !o)}
@@ -165,12 +161,7 @@ export function AppHeader({
           >
             {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
-          <div
-            className={`flex shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-sm font-semibold text-gray-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 ${TOUCH_TARGET} p-2`}
-            aria-hidden="true"
-          >
-            A
-          </div>
+          <FontSizeToggle variant="inline" />
         </div>
       </div>
 

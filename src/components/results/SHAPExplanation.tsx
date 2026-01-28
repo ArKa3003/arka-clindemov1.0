@@ -37,7 +37,7 @@ export default function SHAPExplanation({ factors, baselineScore, finalScore }: 
           </div>
           <div className="text-left min-w-0">
             <h3 className="font-semibold text-gray-900 text-sm sm:text-base">Why This Score? (SHAP Explanation)</h3>
-            <p className="text-xs sm:text-base text-gray-600 truncate sm:whitespace-normal">Transparent scoring - see exactly how each factor contributed</p>
+            <p className="text-xs sm:text-base text-gray-800 truncate sm:whitespace-normal">Transparent scoring - see exactly how each factor contributed</p>
           </div>
         </div>
         {expanded ? <ChevronUp className="h-5 w-5 text-gray-500 flex-shrink-0" aria-hidden /> : <ChevronDown className="h-5 w-5 text-gray-500 flex-shrink-0" aria-hidden />}
@@ -46,8 +46,8 @@ export default function SHAPExplanation({ factors, baselineScore, finalScore }: 
       {expanded && (
         <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
           {/* Score Calculation Summary */}
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-            <span className="text-base text-gray-600">Baseline Score:</span>
+          <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg border border-gray-300">
+            <span className="text-base text-gray-900 font-medium">Baseline Score:</span>
             <span className="font-mono font-medium text-gray-900">{baselineScore.toFixed(1)}</span>
           </div>
 
@@ -118,7 +118,7 @@ export default function SHAPExplanation({ factors, baselineScore, finalScore }: 
           </button>
           
           {/* Methodology Notice */}
-          <p className="text-sm text-gray-600 pt-4 border-t border-gray-200">
+          <p className="text-sm text-gray-800 pt-4 border-t border-gray-200">
             <strong className="text-gray-900">Note:</strong> These weights are derived from peer-reviewed medical literature. 
             AIIE is a proprietary methodology using RAND/UCLA + GRADE.
           </p>

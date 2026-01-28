@@ -145,11 +145,14 @@ export function AppropriatenessIndicator({
           </div>
         </div>
 
-        {/* Shape indicator badge - Top right corner */}
-        <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 z-20">
+        {/* Shape indicator badge - Top right, half outside shape so never covered */}
+        <div
+          className="absolute z-20 flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center"
+          style={{ top: 0, right: 0, transform: 'translate(40%, -40%)' }}
+        >
           <span
             className={clsx(
-              'flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded border-2 font-bold text-xs sm:text-sm',
+              'flex h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0 items-center justify-center rounded-full border-2 font-bold text-xs sm:text-sm shadow-md',
               trafficLight === 'green' && 'bg-white border-teal-700 text-teal-700',
               trafficLight === 'yellow' && 'bg-white border-amber-700 text-amber-700',
               trafficLight === 'red' && 'bg-white border-red-800 text-red-800'
@@ -168,7 +171,7 @@ export function AppropriatenessIndicator({
       {score > 0 ? (
         <div className="text-center">
           <div className="text-xl sm:text-2xl font-bold text-gray-900" style={{ fontSize: 'clamp(18px, 4vw, 24px)' }}>
-            {score} <span className="text-gray-600 font-semibold">/9</span>
+            {score} <span className="text-gray-800 font-semibold">/9</span>
           </div>
         </div>
       ) : (
