@@ -69,13 +69,6 @@ export function SplashScreen({ onContinue }: SplashScreenProps) {
           width="600"
           height="675"
         />
-        {/* Tagline so ARKA is always clearly visible */}
-        <p
-          className="text-center italic text-[#5B9BD5] text-xl sm:text-2xl md:text-3xl font-serif"
-          aria-hidden="true"
-        >
-          rem<span className="text-[#00D9FF] font-bold underline decoration-[#00D9FF] decoration-2 underline-offset-2">ARKA</span>bly precise
-        </p>
       </div>
 
       {/* Continue text with pulse animation */}
